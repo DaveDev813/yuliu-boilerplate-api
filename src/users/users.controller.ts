@@ -1,5 +1,5 @@
 import { Controller, Post, Param, Body } from '@nestjs/common';
-import { signInDto } from './dto/signin.dto';
+import { signInDto } from './dto/signIn.dto';
 import { ApiUseTags } from '@nestjs/swagger';
 import * as uniqid from 'uniqid';
 
