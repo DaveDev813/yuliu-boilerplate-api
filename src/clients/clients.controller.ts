@@ -1,8 +1,8 @@
-import { Controller, Get, Param, Post, Query, UseGuards, Body } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query, UseGuards, Body, Options } from '@nestjs/common';
 import { ApiBearerAuth, ApiUseTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { ClientsService } from './clients.service';
-import { newClientDto } from './dto/newClient.dto';
+import { newClientDto, updateClientDto, searchClientDto } from './dto/client.dto';
 
 @ApiUseTags('Client')
 @ApiBearerAuth()
@@ -19,14 +19,16 @@ export class ClientsController{
     @Get(':id')
     getClientInfo(@Param('id') id : string){
 
+        return this.clientService.getClientInfo(id);
     }
 
-    @Get()
-    getClients(@Query() query : string){
-        return this.clientService.getAllClient();
+    @Post()
+    getClients(@Body() options : searchClientDto){
+
+        return this.clientService.getClients(options);
     }
 
-    @Post('register')
+    @Post('create')
     async createClient(@Body() client : newClientDto){
 
         let result = await this.clientService.createClient(client);
@@ -35,8 +37,15 @@ export class ClientsController{
     }
 
     @Post('update/:id')
-    updateClient(){
+    async updateClient(@Param('id') id : string, @Body() revisions : updateClientDto){
 
+        return await this.clientService.updateClient(id, revisions);
+    }
+
+    @Post('disable/:id')
+    async disableClient(@Param('id') id : string){
+
+        return await this.clientService.disableClient(id);
     }
 
 }

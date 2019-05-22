@@ -2,8 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import * as csurf from 'csurf';
-import * as rateLimit from 'express-rate-limit';
+// import * as csurf from 'csurf';
+// import rateLimit from 'express-rate-limit';
 
 async function bootstrap(){
 
@@ -14,7 +14,7 @@ async function bootstrap(){
     /**
      * disable for more detailed debugging
      */
-    disableErrorMessages: true,
+    disableErrorMessages: false,
 
     /**
      * Strictly apply tranformation of payload to DTO classes 
@@ -24,11 +24,11 @@ async function bootstrap(){
   }))
   .enableCors()
   // .use(csurf())
-  .use(rateLimit({ 
-    /** max 100 requests in 10mins */
-    windowMs: (10 * 60) * 1000, 
-    max: 100 
-  }));
+  // .use(rateLimit({ 
+  //   /** max 100 requests in 10mins */
+  //   windowMs: (10 * 60) * 1000, 
+  //   max: 100 
+  // }));
 
   const options  = new DocumentBuilder().addBearerAuth().build();
   const document = SwaggerModule.createDocument(app, options);
