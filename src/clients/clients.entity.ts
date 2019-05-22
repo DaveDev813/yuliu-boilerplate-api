@@ -20,6 +20,12 @@ export class Clients{
     
     @Column() 
     contact_no : string;
+
+    @Column({ 
+        type : 'boolean', 
+        default : () => "FALSE"
+    }) 
+    is_disabled : boolean;
     
     @Column({
         type : 'datetime',

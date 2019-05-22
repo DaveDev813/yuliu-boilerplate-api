@@ -8,6 +8,7 @@ import { ClientsModule }  from './clients/clients.module';
 import { ConfigModule }   from './config/config.module';
 import { UsersModule } from './users/users.module';
 import { UsersService } from './users/users.service';
+import { userProviders } from './users/users.providers';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { UsersService } from './users/users.service';
     TransactionsController
   ],
   providers: [
+    ...userProviders,
     UsersService,
     AuthService, 
     HttpStrategy
