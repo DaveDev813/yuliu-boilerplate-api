@@ -18,18 +18,24 @@ export class Clients{
     @Column() 
     email : string;
     
-    @Column() 
-    contact_no : string;
+    @Column()
+    mobile_no : string;
 
-    @Column({ 
-        type : 'boolean', 
-        default : () => "FALSE"
-    }) 
-    is_disabled : boolean;
-    
-    @Column({
-        type : 'datetime',
-        default : () => "CURRENT_TIMESTAMP"
-    })
+    @Column({ nullable : true })
+    telephone_no : string;
+
+    @Column({ type : "longtext"})
+    address : string;
+
+    @Column()
+    zip_code : string;
+
+    @Column()
+    city : string;
+
+    @Column({type : 'datetime', nullable : true})
+    last_transaction_date : string;
+
+    @Column({type : 'datetime', default : () => "CURRENT_TIMESTAMP"})
     date_created : string;
 }
