@@ -9,24 +9,28 @@ import { ConfigModule }   from './config/config.module';
 import { UsersModule } from './users/users.module';
 import { UsersService } from './users/users.service';
 import { userProviders } from './users/users.providers';
+import { ProductsService } from './products/products.service';
+import { ProductsModule } from './products/products.module';
+import { productProviders } from './products/products.provider';
 
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: 'bearer' }),
     ClientsModule,
     ConfigModule,
-    UsersModule
+    UsersModule,
+    ProductsModule
   ],
-  controllers: [
-    VendorsController, 
-    TransactionsController
-  ],
+  controllers: [],
   providers: [
-    ...userProviders,
-    UsersService,
     AuthService, 
-    HttpStrategy
+    ...userProviders,
+    ...productProviders,
+    UsersService,
+    ProductsService,
+    HttpStrategy, 
   ],
+
 })
 
 export class AppModule {}
