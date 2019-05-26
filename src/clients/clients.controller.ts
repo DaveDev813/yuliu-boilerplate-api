@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Query, UseGuards, Body, Options } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query, UseGuards, Body, Options, Put, Delete } from '@nestjs/common';
 import { ApiBearerAuth, ApiUseTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { ClientsService } from './clients.service';
@@ -36,16 +36,15 @@ export class ClientsController{
         return result.generatedMaps;
     }
 
-    @Post('update/:id')
+    @Put('update/:id')
     async updateClient(@Param('id') id : string, @Body() revisions : updateClientDto){
 
         return await this.clientService.updateClient(id, revisions);
     }
 
-    @Post('disable/:id')
-    async disableClient(@Param('id') id : string){
+    // @Post('disable/:id')
+    // async disableClient(@Param('id') id : string){
 
-        return await this.clientService.disableClient(id);
-    }
-
+    //     return await this.clientService.disableClient(id);
+    // }
 }
