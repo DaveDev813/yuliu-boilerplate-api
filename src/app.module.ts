@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { VendorsController } from './vendors/vendors.controller';
 import { TransactionsController } from './transactions/transactions.controller';
-import { AuthService } from './auth/auth.service';
 import { PassportModule } from '@nestjs/passport';
 import { HttpStrategy } from './http.strategy';
 import { ClientsModule }  from './clients/clients.module';
@@ -23,7 +22,6 @@ import { productProviders } from './products/products.provider';
   ],
   controllers: [],
   providers: [
-    AuthService, 
     ...userProviders,
     ...productProviders,
     UsersService,

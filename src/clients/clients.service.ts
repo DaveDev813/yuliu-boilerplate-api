@@ -24,14 +24,14 @@ export class ClientsService{
 
     async disableClient(id : string){
 
-        let client = await this.getClientInfo(id);
+        let client = await this.getClientInfoById(id);
 
         client.is_disabled = true;
 
         return await this.clientRespository.update(id, client);
     }
 
-    async getClientInfo(id : string){
+    async getClientInfoById(id : string){
         
         return await this.clientRespository.findOne(id);
     }

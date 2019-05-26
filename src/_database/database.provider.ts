@@ -10,9 +10,7 @@ export const databaseProviders = [
       username: 'root',
       password: '',
       database: 'regasco',
-      entities: [
-          __dirname + '/../**/*.entity{.ts,.js}',
-      ],
+      entities: [__dirname + '/../**/*.entity{.ts,.js}'],
       synchronize: true,
       logging : true
     }),

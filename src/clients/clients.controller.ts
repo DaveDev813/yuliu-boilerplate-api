@@ -10,19 +10,15 @@ import { newClientDto, updateClientDto, searchClientDto } from './dto/client.dto
 @Controller('clients')
 export class ClientsController{
 
-    constructor(
-        private readonly clientService : ClientsService
-    ){
-
-    }
+    constructor(private readonly clientService : ClientsService){}
 
     @Get(':id')
     getClientInfo(@Param('id') id : string){
 
-        return this.clientService.getClientInfo(id);
+        return this.clientService.getClientInfoById(id);
     }
 
-    @Post()
+    @Get()
     getClients(@Body() options : searchClientDto){
 
         return this.clientService.getClients(options);

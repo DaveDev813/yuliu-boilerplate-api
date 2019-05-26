@@ -2,7 +2,6 @@ import { Injectable, Inject } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Users } from './users.entity';
 import { signInDto, newUserDto } from './dto/users.dto';
-import * as uniqid from 'uniqid';
 
 @Injectable()
 export class UsersService{
@@ -13,33 +12,68 @@ export class UsersService{
 
     }
 
-    async validateSessToken(sess_key : string){
+    async getUserAppToken(key : string){
 
         return await this.userRepository
         .createQueryBuilder()
-        .where(" api_sess_key = :sess_key", { sess_key : sess_key})
+        .select()
+        .where("api_key = :key", { key : key })
+        .getOne();
+    } 
+
+    async getUserInfoByAPIKey(key : string){
+
+        return await this.userRepository
+        .createQueryBuilder()
+        .select()
+        .where("api_key = :key", { key : key })
+        .getOne();
+    }
+
+    async validateSessToken(sess_key : string){
+
+        /**
+         * Validate origin
+         */
+
+         return await this.userRepository
+        .createQueryBuilder()
+        .where("api_sess_key = :sess_key", { sess_key : sess_key})
         .getCount()
     }
 
     async signInUser(id : string){
 
-        let api_sess_key = uniqid();
-        let result = await this.userRepository
-        .createQueryBuilder()
-        .update(Users)
-        .set({ api_sess_key : api_sess_key, is_logged_in : true })
-        .where("id = :id", {id : id}).execute();
+        return [];
+        // let api_sess_key = uniqid();
+        // let expiry = moment().format("MM-DD-YYYY HH:mm:ss").toString();
+        
+        // let result = await this.userRepository        
+        // .createQueryBuilder()
+        // .update(Users)
+        // .set({ 
+        //     api_sess_key : api_sess_key, 
+        //     session_expires_at : expiry,
+        //     is_logged_in : true
+        //  })
+        // .where("id = :id", {id : id})
+        // .execute();
 
-        return { api_sess_key : api_sess_key, result : result }
+        // return { 
+        //     session_expires_at : expiry,
+        //     api_sess_key : api_sess_key, 
+        //     result : result 
+        // }
     }
 
     async signOutUser(id : string, api_sess_key : string){
 
-        return await this.userRepository
-        .createQueryBuilder()
-        .update(Users).set({is_logged_in : false})
-        .where("api_sess_key = :key", { key : api_sess_key})
-        .where("id = :id", { id : id}).execute();
+        return [];
+        // return await this.userRepository
+        // .createQueryBuilder()
+        // .update(Users).set({is_logged_in : false})
+        // .where("api_sess_key = :key", { key : api_sess_key})
+        // .where("id = :id", { id : id}).execute();
     }
 
     async registerUser(user : newUserDto){

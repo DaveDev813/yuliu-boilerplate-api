@@ -1,12 +1,12 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ClientsController } from './clients.controller';
 import { ClientsService } from './clients.service';
-import { AuthService } from 'src/auth/auth.service';
 import { UsersService } from 'src/users/users.service';
 import { PassportModule } from '@nestjs/passport';
 import { clientProviders } from './clients.providers';
 import { DatabaseModule } from 'src/_database/database.module';
 import { userProviders } from 'src/users/users.providers';
+import { JWTChecker } from 'src/app.middleware';
 
 @Module({
     imports: [
@@ -20,8 +20,18 @@ import { userProviders } from 'src/users/users.providers';
         ...clientProviders, 
         ...userProviders, 
         ClientsService, 
-        UsersService, 
-        AuthService
+        UsersService
     ]
 })
-export class ClientsModule {}
+export class ClientsModule implements NestModule{
+
+    /**
+     * Apply middlewares for this module
+     */
+    configure(consumer : MiddlewareConsumer){
+
+        consumer
+        .apply(JWTChecker)
+        .forRoutes('clients')
+    }
+}
