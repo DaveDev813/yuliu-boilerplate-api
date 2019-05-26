@@ -26,7 +26,7 @@ export class ClientsService{
 
         let client = await this.getClientInfoById(id);
 
-        client.is_disabled = true;
+        // client.is_disabled = true;
 
         return await this.clientRespository.update(id, client);
     }
