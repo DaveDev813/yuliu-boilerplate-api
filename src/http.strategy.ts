@@ -25,6 +25,13 @@ export class HttpStrategy extends PassportStrategy(Strategy){
     }
 
     /**
+     * Checks if the bearer is enabled/disabled
+     * */
+    if(bearer.is_disabled){
+      throw new UnauthorizedException("Key is disabled");
+    }
+
+    /**
      * Checks if the Api key is still valid
      * */
     if(moment().isAfter(moment(bearer.api_key_validity))){

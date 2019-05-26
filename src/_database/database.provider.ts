@@ -12,7 +12,7 @@ export const databaseProviders = [
       database: 'regasco',
       entities: [__dirname + '/../**/*.entity{.ts,.js}'],
       synchronize: true,
-      logging : true
+      logging : false
     }),
   },
 ];
