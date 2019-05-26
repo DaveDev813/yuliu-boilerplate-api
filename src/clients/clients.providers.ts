@@ -1,4 +1,4 @@
-import { Connection, Repository} from 'typeorm';
+import { Connection} from 'typeorm';
 import { Clients } from './clients.entity';
 
 export const clientProviders = [{
