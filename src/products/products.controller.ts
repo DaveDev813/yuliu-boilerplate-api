@@ -1,8 +1,10 @@
-import { Controller, Get, Param, Post, Body, Put, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Param, Post, Body, Put, UseGuards } from '@nestjs/common';
 import { ProductsService } from './products.service';
-import { searchProductDto, newProductDto, updateProductDto } from './dto/products.dto';
+import { newProductDto, updateProductDto } from './dto/products.dto';
 import { ApiUseTags, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+import { searchDto, primaryIdDto } from 'src/_commons/commons.dto';
+import { identity } from 'rxjs';
 
 @ApiUseTags('Products')
 @ApiBearerAuth()
@@ -12,36 +14,29 @@ export class ProductsController{
 
     constructor(
         private readonly productService : ProductsService
-    ){
-
-    }
-
-    @Get(':id')
-    async getProductInfo(@Param('id') id : string){
-
-        return await this.productService.getProductInfo(id);
-    }
+    ){}
 
     @Post()
-    async getProducts(@Body() options : searchProductDto){
+    async getProducts(@Body() options : searchDto){
 
-        return await this.productService.getProducts(options.limit, options.offset, options.keyword);
+        return await this.productService.getProducts(options);
+    }
+
+    @Post(':id')
+    async getProductInfo(@Body() identity : primaryIdDto){
+
+        return await this.productService.getProductInfoById(identity);
     }
 
     @Post('create')
     async addNewProduct(@Body() product : newProductDto){
 
-        return await this.productService.addNewProduct(product);
+        return await this.productService.createProduct(product);
     }
 
     @Put('update/:id')
     async updateProduct(@Param('id') id : string, @Body() product : updateProductDto){
 
         return await this.productService.updateProduct(id, product);
-    }
-
-    @Delete('delete/:id')
-    disableProduct(@Param('id') id : string){
-
     }
 }

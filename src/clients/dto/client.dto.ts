@@ -1,24 +1,6 @@
-import { IsNotEmpty, IsEmail, IsString, MinLength, MaxLength, IsBoolean, IsNumber } from "class-validator";
+import { IsNotEmpty, IsEmail, IsString, MinLength, MaxLength } from "class-validator";
 import { Optional } from "@nestjs/common";
 import { ApiModelProperty } from "@nestjs/swagger";
-
-export class searchClientDto{
-
-    @ApiModelProperty()
-    @IsString()
-    @Optional()
-    keyword : string = "";
-
-    @ApiModelProperty()
-    @IsNumber()
-    @Optional()
-    offset : number = 0;
-
-    @ApiModelProperty()
-    @IsNumber()
-    @Optional()
-    limit  : number = 10;
-}
 
 export class newClientDto{
 

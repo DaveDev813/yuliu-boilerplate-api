@@ -6,7 +6,8 @@ import { PassportModule } from '@nestjs/passport';
 import { clientProviders } from './clients.providers';
 import { DatabaseModule } from 'src/_database/database.module';
 import { userProviders } from 'src/users/users.providers';
-import { JWTChecker } from 'src/app.middleware';
+import { JWTChecker, Logger } from 'src/app.middleware';
+import { CommonQueries } from 'src/_commons/crud.orm';
 
 @Module({
     imports: [
@@ -17,9 +18,10 @@ import { JWTChecker } from 'src/app.middleware';
         ClientsController 
     ],
     providers : [ 
+        CommonQueries,
         ...clientProviders, 
-        ...userProviders, 
         ClientsService, 
+        ...userProviders,
         UsersService
     ]
 })
@@ -30,8 +32,6 @@ export class ClientsModule implements NestModule{
      */
     configure(consumer : MiddlewareConsumer){
 
-        consumer
-        .apply(JWTChecker)
-        .forRoutes('clients')
+        consumer.apply(JWTChecker).forRoutes('clients');
     }
 }

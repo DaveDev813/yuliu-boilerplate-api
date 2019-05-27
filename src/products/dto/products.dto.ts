@@ -2,24 +2,6 @@ import { ApiModelProperty } from "@nestjs/swagger";
 import { IsString, IsNumber } from "class-validator";
 import { Optional } from "@nestjs/common";
 
-export class searchProductDto{
-
-    @ApiModelProperty()
-    @IsString()
-    @Optional()
-    keyword : string = "";
-
-    @ApiModelProperty()
-    @IsNumber()
-    @Optional()
-    offset : number = 0;
-
-    @ApiModelProperty()
-    @IsNumber()
-    @Optional()
-    limit  : number = 10;
-}
-
 export class newProductDto{
 
     @ApiModelProperty()

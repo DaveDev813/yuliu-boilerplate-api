@@ -1,8 +1,9 @@
-import { Controller, Get, Param, Post, Query, UseGuards, Body, Options, Put } from '@nestjs/common';
-import { ApiBearerAuth, ApiUseTags, ApiModelProperty } from '@nestjs/swagger';
+import { Controller, Param, Post, UseGuards, Body, Put } from '@nestjs/common';
+import { ApiBearerAuth, ApiUseTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { ClientsService } from './clients.service';
-import { newClientDto, updateClientDto, searchClientDto } from './dto/client.dto';
+import { newClientDto, updateClientDto } from './dto/client.dto';
+import { searchDto, primaryIdDto } from 'src/_commons/commons.dto';
 
 @ApiUseTags('Client')
 @ApiBearerAuth()
@@ -13,15 +14,15 @@ export class ClientsController{
     constructor(private readonly clientService : ClientsService){}
 
     @Post()
-    getClients(@Body() options : searchClientDto){
+    async getClients(@Body() options : searchDto){
 
-        return this.clientService.getClients(options);
+        return await this.clientService.getClients(options);
     }
 
     @Post(':id')
-    getClientInfo(@Body('id') id : string){
+    async getClientInfo(@Body('id') identity : primaryIdDto){
 
-        return this.clientService.getClientInfoById(id);
+        return await this.clientService.getClientInfoById(identity);
     }
 
     @Post('create')
@@ -35,10 +36,4 @@ export class ClientsController{
 
         return await this.clientService.updateClient(id, revisions);
     }
-
-    // @Post('disable/:id')
-    // async disableClient(@Param('id') id : string){
-
-    //     return await this.clientService.disableClient(id);
-    // }
 }
