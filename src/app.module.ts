@@ -14,6 +14,8 @@ import { VendorsModule } from './vendors/vendors.module';
 import { vendorProviders } from './vendors/vendors.provider';
 import { Logger } from './app.middleware';
 import { CommonQueries } from './_commons/crud.orm';
+import { VendorUsersController } from './vendor-users/vendor-users.controller';
+import { VendorUsersModule } from './vendor-users/vendor-users.module';
 
 @Module({
   imports: [
@@ -22,7 +24,8 @@ import { CommonQueries } from './_commons/crud.orm';
     ConfigModule,
     UsersModule,
     ProductsModule,
-    VendorsModule
+    VendorsModule,
+    VendorUsersModule
   ],
   providers: [
     CommonQueries,
@@ -34,6 +37,7 @@ import { CommonQueries } from './_commons/crud.orm';
     ProductsService,
     HttpStrategy,
   ],
+  controllers: [VendorUsersController],
 })
 export class AppModule implements NestModule{
   configure(consumer: MiddlewareConsumer){
