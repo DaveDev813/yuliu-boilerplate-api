@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, TableForeignKey, JoinColumn, ManyToMany, ManyToOne } from 'typeorm';
 
 @Entity()
 export class Products{
@@ -6,16 +6,21 @@ export class Products{
     @PrimaryGeneratedColumn() 
     id: number;
 
-    @Column()
+    // @ManyToOne(type : Vendors)
+    // @JoinColumn()
+    @Column({ type : "int", nullable : false})
+    vendor_id : string;
+
+    @Column({ type : "varchar", nullable : false, unique : true}) 
     product_code : string;
 
-    @Column() 
+    @Column({ type : "varchar", nullable : false, unique : true}) 
     product_name : string;
 
-    @Column({ nullable  : true }) 
+    @Column({ type : "longtext", nullable : true }) 
     description : string;
 
-    @Column() 
+    @Column({ type : "text", nullable : false }) 
     unit_of_measure : string;
     
     @Column({ type : "double precision", default : () => 0.00 }) 

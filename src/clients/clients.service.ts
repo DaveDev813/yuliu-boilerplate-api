@@ -1,60 +1,52 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Clients } from './clients.entity';
-import { newClientDto, updateClientDto, searchClientDto } from './dto/client.dto';
+import { newClientDto, updateClientDto } from './dto/client.dto';
+import { searchDto, primaryIdDto } from 'src/_commons/commons.dto';
+import { CommonQueries } from 'src/_commons/crud.orm';
 
 @Injectable()
 export class ClientsService{
-    
-    constructor(
-        @Inject('CLIENT_REPOSITORY') private readonly clientRespository : Repository<Clients>
-    ){
 
+    private searchColumns = ["firstname", "middlename", "lastname", "email", "contact_no"];
+
+    constructor(
+        private readonly commons : CommonQueries,
+        @Inject('CLIENT_REPOSITORY') private readonly clientRespository : Repository<Clients>){
+
+        this.commons.query(this.clientRespository);
+    }
+
+    async getClientInfoById(identity : primaryIdDto ){
+        
+        return await this.clientRespository.findOne(identity.id);
+    }
+
+    async getClients(options : searchDto){
+                
+        const result = await this.commons.read(Number(options.limit), Number(options.offset), options.keyword, this.searchColumns);
+
+        return result;
     }
 
     async createClient(client : newClientDto){
 
-        return await this.clientRespository.insert(client);
+        const result = await this.commons.create(client);
+
+        return result;
     }
 
     async updateClient(id : string, revisions : updateClientDto){
 
-        return await this.clientRespository.update(id, revisions);
+        const result = await this.commons.update(Number(id), revisions);
+
+        return result;
     }
 
-    async disableClient(id : string){
+    async deleteClient(id : string){
 
-        let client = await this.getClientInfo(id);
+        const result = await this.commons.delete(Number(id));
 
-        // client.is_disabled = true;
-
-        return await this.clientRespository.update(id, client);
-    }
-
-    async getClientInfo(id : string){
-        
-        return await this.clientRespository.findOne(id);
-    }
-
-    async getClients(options : searchClientDto){
-
-        let query = this.clientRespository.createQueryBuilder();
-
-        query.offset(options.offset * options.limit)
-
-        query.limit(options.limit);
-
-        if(options.keyword){
-        
-            query.where({
-                firstname  : options.keyword,
-                middlename : options.keyword,
-                lastname   : options.keyword,
-                email      : options.keyword,
-                contact_no : options.keyword                
-            })            
-        }
-
-        return await query.execute();
+        return result;
     }
 }

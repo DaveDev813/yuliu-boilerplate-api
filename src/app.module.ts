@@ -1,17 +1,19 @@
-import { Module } from '@nestjs/common';
-import { VendorsController } from './vendors/vendors.controller';
-import { TransactionsController } from './transactions/transactions.controller';
-import { AuthService } from './auth/auth.service';
+import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { HttpStrategy } from './http.strategy';
-import { ClientsModule }  from './clients/clients.module';
-import { ConfigModule }   from './config/config.module';
+import { ClientsModule } from './clients/clients.module';
+import { ConfigModule } from './_config/config.module';
 import { UsersModule } from './users/users.module';
 import { UsersService } from './users/users.service';
 import { userProviders } from './users/users.providers';
 import { ProductsService } from './products/products.service';
 import { ProductsModule } from './products/products.module';
 import { productProviders } from './products/products.provider';
+import { VendorsService } from './vendors/vendors.service';
+import { VendorsModule } from './vendors/vendors.module';
+import { vendorProviders } from './vendors/vendors.provider';
+import { Logger } from './app.middleware';
+import { CommonQueries } from './_commons/crud.orm';
 
 @Module({
   imports: [
@@ -19,18 +21,22 @@ import { productProviders } from './products/products.provider';
     ClientsModule,
     ConfigModule,
     UsersModule,
-    ProductsModule
+    ProductsModule,
+    VendorsModule
   ],
-  controllers: [],
   providers: [
-    AuthService, 
+    CommonQueries,
     ...userProviders,
-    ...productProviders,
     UsersService,
+    ...vendorProviders,
+    VendorsService, 
+    ...productProviders,
     ProductsService,
-    HttpStrategy, 
+    HttpStrategy,
   ],
-
 })
-
-export class AppModule {}
+export class AppModule implements NestModule{
+  configure(consumer: MiddlewareConsumer){
+    consumer.apply(Logger).forRoutes({ path : "*", method : RequestMethod.ALL });
+  }
+}

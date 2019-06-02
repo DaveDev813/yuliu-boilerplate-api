@@ -2,55 +2,53 @@ import { Injectable, Inject } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Products } from './products.entity';
 import { newProductDto, updateProductDto } from './dto/products.dto';
+import { CommonQueries } from 'src/_commons/crud.orm';
+import { searchDto, primaryIdDto } from 'src/_commons/commons.dto';
 
 @Injectable()
 export class ProductsService{
 
-    constructor(
-        @Inject('PRODUCT_REPOSITORY') private readonly productRespository : Repository<Products>
-    ){
+    private searchColumns = [];
 
+    constructor(
+        private readonly commons : CommonQueries,
+        @Inject('PRODUCT_REPOSITORY') private readonly productRespository : Repository<Products>){
+
+        this.commons.query(this.productRespository);
     }
 
-    async addNewProduct(product : newProductDto){
+    async getProductInfoById(identity : primaryIdDto){
+        
+        return await this.productRespository.findOne(identity.id);
+    }
 
-        return await this.productRespository.insert(product);
+    async getProducts(options : searchDto){
+
+        const result = await this.commons.read(Number(options.limit), Number(options.offset), options.keyword, this.searchColumns);
+
+        return result;
+    }
+
+    async createProduct(product : newProductDto){
+
+        const result = await this.commons.create(product);
+
+        return result;
     }
 
     async updateProduct(id : string, revision : updateProductDto){
 
-        return await this.productRespository
-        .createQueryBuilder()
-        .update(revision).where(" id = :id", {id : id})
-        .execute();
-    }
+        const result = await this.commons.update(Number(id), revision);
 
-    async getProductInfo(id : string){
-
-        return await this.productRespository.findOne(id);
+        return result;
     }
     
-    async getProducts(limit : number, offset : number, keyword ?: string){
+    async deleteProduct(id : string){
 
-        let query = this.productRespository
-        .createQueryBuilder()
-        .select()
-        .offset(offset * limit)
-        .limit(limit)
-        
-        if(keyword){
-        
-            query.where({
-                product_code : keyword,
-                product_name : keyword,
-                description : keyword,
-                unit_of_measure : keyword,
-                unit_cost : keyword,
-                unit_price : keyword,
-                unit_srp : keyword
-            })
-        }
-        
-        return await query.execute();
+        const result = await this.commons.delete(Number(id));
+
+        return result;
     }
 }
+
+

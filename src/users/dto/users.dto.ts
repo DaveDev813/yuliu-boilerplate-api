@@ -20,25 +20,26 @@ export class newUserDto{
   @ApiModelProperty()
   @IsNotEmpty()
   @IsString()
-  app_origin : string;
-
-  @ApiModelProperty()
-  @IsNotEmpty()
-  @IsString()
+  @MinLength(10)
+  @MaxLength(100)
   app_name : string;
 
   @ApiModelProperty()
   @IsString()
   @Optional()
+  @MaxLength(500)
   description ?: string;
 
   @ApiModelProperty()
   @IsNotEmpty()
-  @IsBoolean()
-  is_logged_in : boolean = false;
+  @IsString()
+  app_origin : string;
 
   @ApiModelProperty()
   @IsNotEmpty()
-  @IsBoolean()
-  is_disabled : boolean = false;
+  app_token_validity : string;
+
+  @ApiModelProperty()
+  @IsNotEmpty()
+  api_key_validity : string;
 }

@@ -6,35 +6,38 @@ export class Clients{
     @PrimaryGeneratedColumn() 
     id: number;
 
-    @Column() 
+    @Column({ type : "text", nullable  : false }) 
     firstname : string;
 
-    @Column({ nullable  : true }) 
+    @Column({ type : "text", nullable  : true }) 
     middlename : string;
 
-    @Column() 
+    @Column({ type : "text", nullable  : false }) 
     lastname : string;
     
-    @Column() 
+    @Column({ type : "varchar", nullable : false, unique : false })
     email : string;
     
-    @Column()
+    @Column({ type : "varchar", nullable: false})
     mobile_no : string;
 
-    @Column({ nullable : true })
+    @Column({ type : "varchar", nullable : true })
     telephone_no : string;
 
-    @Column({ type : "longtext"})
+    @Column({ type : "longtext", nullable : false})
     address : string;
 
-    @Column()
+    @Column({ type : "text", nullable : false })
     zip_code : string;
 
-    @Column()
+    @Column({ type : "text", nullable : false })
     city : string;
 
     @Column({type : 'datetime', nullable : true})
     last_transaction_date : string;
+
+    @Column({ type : 'datetime'})
+    last_date_updated : string;
 
     @Column({type : 'datetime', default : () => "CURRENT_TIMESTAMP"})
     date_created : string;
