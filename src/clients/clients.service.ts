@@ -3,7 +3,7 @@ import { Repository } from 'typeorm';
 import { Clients } from './clients.entity';
 import { newClientDto, updateClientDto } from './dto/client.dto';
 import { searchDto, primaryIdDto } from 'src/_commons/commons.dto';
-import { CommonQueries } from 'src/_commons/crud.orm';
+import { CommonQueries } from 'src/_commons/commons.orm';
 
 @Injectable()
 export class ClientsService{

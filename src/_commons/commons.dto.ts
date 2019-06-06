@@ -5,8 +5,8 @@ import { Optional } from "@nestjs/common";
 export class primaryIdDto{
 
     @ApiModelProperty()
-    @IsString()
-    id : string;
+    @IsNumber()
+    id : number;
 }
 
 export class searchDto{

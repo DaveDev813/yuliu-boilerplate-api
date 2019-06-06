@@ -3,13 +3,13 @@ import { JWTChecker } from 'src/app.middleware';
 import { VendorsController } from './vendors.controller';
 import { DatabaseModule } from 'src/_database/database.module';
 import { PassportModule } from '@nestjs/passport';
-import { productProviders } from 'src/products/products.provider';
-import { ProductsService } from 'src/products/products.service';
 import { userProviders } from 'src/users/users.providers';
 import { UsersService } from 'src/users/users.service';
-import { vendorProviders } from './vendors.provider';
-import { VendorsService } from './vendors.service';
-import { CommonQueries } from 'src/_commons/crud.orm';
+import { VendorsService } from './services/vendors.service';
+import { CommonQueries } from 'src/_commons/commons.orm';
+import { vendorProviders, branchProviders, employeeProviders, servicesProviders } from './vendors.provider';
+import { BranchesController } from './branches.controller';
+import { BranchesService } from './services/branches.service';
 
 @Module({
     imports: [
@@ -21,16 +21,19 @@ import { CommonQueries } from 'src/_commons/crud.orm';
     ],
     providers : [
         CommonQueries,
-        ...productProviders,
-        ProductsService,
         ...userProviders,
         UsersService,
         ...vendorProviders,
+        ...branchProviders,
+        ...employeeProviders,
+        ...servicesProviders,
+        BranchesService,
         VendorsService,
     ]
 })
-export class VendorsModule implements NestModule{
-    configure(consumer : MiddlewareConsumer){
-        consumer.apply(JWTChecker).forRoutes('vendors')
-    }
-}
+export class VendorsModule{}
+// export class VendorsModule implements NestModule{
+//     configure(consumer : MiddlewareConsumer){
+//         consumer.apply(JWTChecker).forRoutes('vendors')
+//     }
+// }

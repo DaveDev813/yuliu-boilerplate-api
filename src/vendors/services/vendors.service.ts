@@ -1,20 +1,28 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { Vendors } from './vendors.entity';
 import { Repository } from 'typeorm';
-import { CommonQueries } from 'src/_commons/crud.orm';
+import { CommonQueries } from 'src/_commons/commons.orm';
 import { searchDto, primaryIdDto } from 'src/_commons/commons.dto';
-import { newVendorDto, updateVendorDto } from './dto/vendor.dto';
+import { newVendorDto, updateVendorDto } from '../dto/vendor.dto';
+import { Vendors } from '../entities/vendors.entity';
 
 @Injectable()
 export class VendorsService{
 
-    private searchColumns = [];
+    private searchColumns = ['name', 'description', 'business_type', 'email'];
 
     constructor(
         private readonly common : CommonQueries,
         @Inject('VENDOR_REPOSITORY') private readonly vendorRepository : Repository<Vendors>){
 
         this.common.query(this.vendorRepository)
+    }
+
+    async isUserFromVendor(user : number, vendor : number){
+        return true;
+    }
+
+    async isValidAction(user : number){
+        return true;
     }
 
     async getVendorInfoById(identity : primaryIdDto){
@@ -30,10 +38,10 @@ export class VendorsService{
     }
 
     async createVendor(vendor : newVendorDto){
-        
-        const result =  await this.common.create(vendor);
 
-        return result;
+        /** Checks if valid phone number */
+         
+        return await this.common.insert(vendor);
     }
 
     async updateVendor(id : string, revision : updateVendorDto){

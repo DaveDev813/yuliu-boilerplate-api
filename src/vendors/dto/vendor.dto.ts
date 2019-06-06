@@ -1,13 +1,13 @@
 import { ApiModelProperty } from "@nestjs/swagger";
-import { IsString, IsEmail, MinLength, MaxLength } from "class-validator";
+import { IsString, IsEmail, MinLength, MaxLength, IsNumber } from "class-validator";
 import { Optional } from "@nestjs/common";
 
 export class newVendorDto{
-    
+
     @ApiModelProperty()
     @IsString()
     @MinLength(3)
-    @MaxLength(20)
+    @MaxLength(70)
     name : string;
 
     @ApiModelProperty()
@@ -22,26 +22,33 @@ export class newVendorDto{
 
     @ApiModelProperty()
     @Optional()
-    @IsString()
-    @MinLength(15)
-    @MaxLength(15)
-    mobile_no ?: string;
+    @IsNumber()
+    @MinLength(11)
+    @MaxLength(11)
+    mobile_no ?: number;
     
     @ApiModelProperty()
     @Optional()
-    @IsString()
-    @MaxLength(10)
-    @MinLength(10) 
-    telephone_no ?: string;
+    @IsNumber()
+    @MaxLength(7)
+    @MinLength(7) 
+    telephone_no ?: number;
     
     @ApiModelProperty()
     @IsString()
-    @Optional()
-    business_hours ?: string;
+    days_open : string;
 
     @ApiModelProperty()
     @IsString()
-    business_type : string;
+    days_closed : string;
+
+    @ApiModelProperty()
+    @IsString()
+    open_hours : string;
+
+    @ApiModelProperty()
+    @IsString()
+    closed_hours : string;
 
     @ApiModelProperty()
     @IsString()
@@ -50,7 +57,20 @@ export class newVendorDto{
 
     @ApiModelProperty()
     @IsString()
-    vendor_type : string;
+    @MaxLength(200)
+    city : string;
+
+    @ApiModelProperty()
+    @IsString()
+    @MaxLength(200)
+    business_type : string;
+
+    @ApiModelProperty()
+    @IsString()
+    account_type : string;
+
+    @ApiModelProperty()
+    created_by : number;
 }
 
 export class updateVendorDto{
