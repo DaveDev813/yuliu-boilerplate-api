@@ -1,11 +1,11 @@
 import { ApiModelProperty } from "@nestjs/swagger";
-import { IsString, IsNumber } from "class-validator";
-import { Optional } from "@nestjs/common";
+import { IsString, IsNumber, IsOptional, IsPositive } from "class-validator";
 
 export class primaryIdDto{
 
     @ApiModelProperty()
     @IsNumber()
+    @IsPositive()
     id : number;
 }
 
@@ -13,16 +13,16 @@ export class searchDto{
 
     @ApiModelProperty()
     @IsString()
-    @Optional()
+    @IsOptional()
     keyword : string = "";
 
     @ApiModelProperty()
     @IsNumber()
-    @Optional()
+    @IsPositive()
     offset : number = 0;
 
     @ApiModelProperty()
     @IsNumber()
-    @Optional()
+    @IsPositive()
     limit  : number = 10;
 }
