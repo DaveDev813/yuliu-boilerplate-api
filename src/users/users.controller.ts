@@ -9,8 +9,9 @@ import * as moment from 'moment';
 export class UsersController{
 
     constructor(
-        private readonly userService : UsersService
-    ){}
+        private readonly userService : UsersService){
+
+    }
 
     @Post('signup')
     async registerUser(@Body() user : newUserDto){
@@ -20,10 +21,5 @@ export class UsersController{
         }else{
             throw new NotAcceptableException("Invalid validity dates, please check App/API validity dates.");
         }
-    }
-
-    @Get('populate')
-    async seedTables(){
-        
     }
 }
