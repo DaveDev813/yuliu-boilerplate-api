@@ -5,6 +5,8 @@ import { Repository } from 'typeorm';
 import { Vendor_Branches } from '../entities/vendors.entity';
 import { newVendorBranchDto, updateVendorBranchDto } from '../dto/branches.dto';
 import { searchDto } from 'src/_commons/commons.dto';
+import voucherCodeGenerator = require('voucher-code-generator');
+import moment = require('moment');
 
 @Injectable()
 export class BranchesService{
@@ -13,6 +15,8 @@ export class BranchesService{
         private readonly common : CommonQueries,
         private readonly vendorsService : VendorsService,
         @Inject('VENDOR_BRANCH_REPOSITORY') private readonly vendorBranchRepository : Repository<Vendor_Branches>){        
+            
+            this.common.query(this.vendorBranchRepository);
     }
 
     async getBranchById( branchId : number ){
@@ -43,7 +47,22 @@ export class BranchesService{
 
     async createBranch(branch : newVendorBranchDto){
 
-        return await this.common.query(this.vendorBranchRepository).create(branch);
+        const _branch = {
+            vendor_id : branch.vendor_id,
+            branch_code : voucherCodeGenerator.generate({ length : 5, count : 1, pattern : `#####`, prefix : `BRANCH-` })[0],
+            contact_person : branch.contact_person,
+            mobile_no : branch.mobile_no,
+            telephone_no : branch.telephone_no ? branch.telephone_no : null,
+            days_open : branch.days_open ? branch.days_open.join(",") : null,
+            days_closed : branch.days_open ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].filter( day => branch.days_open.indexOf(day) <= -1).join(",") : null,
+            open_hours : branch.open_hours ? branch.open_hours : null,
+            closed_hours : branch.open_hours ? moment(branch.open_hours, `HH:mm`).add(8, 'hours').format(`HH:mm`) : null,
+            address : branch.address,
+            city : branch.city,
+            created_by : 1
+        };
+
+        return await this.common.insert(_branch);
     }
 
     async updateVendorBranch(branchId : number, revisions : updateVendorBranchDto){

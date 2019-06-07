@@ -1,7 +1,5 @@
 import { ApiModelProperty } from "@nestjs/swagger";
-import { IsString, IsEmail, MinLength, MaxLength, IsNumber, IsNotEmpty, IsPhoneNumber, IsOptional, Length, IsArray, ArrayUnique, ArrayMinSize, ArrayMaxSize, ValidateNested, IsIn, IsMilitaryTime } from "class-validator";
-import { Optional } from "@nestjs/common";
-import { Timestamp } from "typeorm";
+import { IsString, IsNumber, IsNotEmpty, IsPhoneNumber, IsOptional, Length, IsArray, ArrayUnique, ArrayMinSize, ArrayMaxSize, ValidateNested, IsIn, IsMilitaryTime } from "class-validator";
 
 export class newVendorBranchDto{
 

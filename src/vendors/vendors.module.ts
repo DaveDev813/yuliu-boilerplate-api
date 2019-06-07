@@ -20,13 +20,13 @@ import { BranchesService } from './services/branches.service';
         VendorsController, BranchesController
     ],
     providers : [
-        CommonQueries,
         ...userProviders,
-        UsersService,
         ...vendorProviders,
         ...branchProviders,
         ...employeeProviders,
         ...servicesProviders,
+        CommonQueries,
+        UsersService,
         BranchesService,
         VendorsService,
     ]
