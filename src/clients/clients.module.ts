@@ -1,6 +1,6 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ClientsController } from './clients.controller';
-import { ClientsService } from './clients.service';
+import { ClientsService } from './services/clients.service';
 import { UsersService } from 'src/users/users.service';
 import { PassportModule } from '@nestjs/passport';
 import { clientProviders } from './clients.providers';

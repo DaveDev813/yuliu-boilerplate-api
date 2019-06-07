@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { Clients } from './clients.entity';
-import { newClientDto, updateClientDto } from './dto/client.dto';
+import { Clients } from '../entities/clients.entity';
+import { newClientDto, updateClientDto } from '../dto/client.dto';
 import { searchDto, primaryIdDto } from 'src/_commons/commons.dto';
 import { CommonQueries } from 'src/_commons/commons.orm';
 

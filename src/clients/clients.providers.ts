@@ -1,5 +1,5 @@
 import { Connection} from 'typeorm';
-import { Clients } from './clients.entity';
+import { Clients } from './entities/clients.entity';
 
 export const clientProviders = [{
     provide: 'CLIENT_REPOSITORY',
