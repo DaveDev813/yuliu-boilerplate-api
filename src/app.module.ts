@@ -9,6 +9,8 @@ import { userProviders } from './users/users.providers';
 import { VendorsModule } from './vendors/vendors.module';
 import { Logger } from './app.middleware';
 import { CommonQueries } from './_commons/commons.orm';
+import { VendorServiceController } from './vendors/vendor-service.controller';
+import { VendorServiceService } from './vendor-service/vendor-service.service';
 
 @Module({
   imports: [
@@ -23,7 +25,9 @@ import { CommonQueries } from './_commons/commons.orm';
     ...userProviders,
     UsersService,
     HttpStrategy,
-  ]
+    VendorServiceService,
+  ],
+  controllers: [VendorServiceController]
 })
 export class AppModule implements NestModule{
   configure(consumer: MiddlewareConsumer){

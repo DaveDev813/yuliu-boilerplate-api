@@ -191,7 +191,7 @@ export class Vendor_Services{
     vendor_id : number;
 
     @Column({type : 'integer', nullable : false })
-    business_address_id : number;
+    branch_id : number;
 
     @Column({type : 'varchar', nullable : false, unique : true })
     service_code : string;
@@ -203,7 +203,7 @@ export class Vendor_Services{
     description : string;
 
     @Column({type : 'varchar', nullable : true, default : () => "'N/A'" })
-    service_duration : string;
+    duration : string;
 
     @Column({type : 'double precision', nullable : true, default : () => 0.00 })
     original_price : number;
@@ -215,7 +215,7 @@ export class Vendor_Services{
     percent_comission : number;
     
     @Column({type : 'double precision', nullable : true, default : () => 0.00 })
-    overall_rating : number;
+    rating : number;
 
     @Column({type : 'integer', nullable : true })
     updated_by : number;
