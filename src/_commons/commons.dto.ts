@@ -18,7 +18,6 @@ export class searchDto{
 
     @ApiModelProperty()
     @IsNumber()
-    @IsPositive()
     offset : number = 0;
 
     @ApiModelProperty()
