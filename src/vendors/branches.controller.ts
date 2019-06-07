@@ -33,27 +33,19 @@ export class BranchesController{
     @Post(`create`)
     async createBusinessBranch(@Body() branch : newVendorBranchDto){   
 
-        /** Check if business is still active */
-        /** Check if the user is authorized user from the business */
-        /** Check if the user is allowed to do such things.. */
-        // const valid : { error : boolean, message : string } = await this.branchesService.isValid(branch.vendor_id, branch.created_by);
-
-        // if(valid.error){ throw new BadRequestException(valid.message); }
         const vendor = await this.vendorService.getVendorInfoById({ id : branch.vendor_id });
 
         if(vendor){
+            throw new BadRequestException('Invalid Vendor ID..');
+        }
 
-            if(vendor.vendor_status !== `Disabled`){
-
-                const _result = await this.branchesService.createBranch(branch);
-
-                return { payload : _result.generatedMaps, raw : _result.raw };
-            }
-
+        if(vendor.vendor_status === `Disabled`){
             throw new BadRequestException('Vendor is not active..');
         }
 
-        throw new BadRequestException('Invalid Vendor ID..');
+        const _result = await this.branchesService.createBranch(branch);
+
+        return { payload : _result.generatedMaps, raw : _result.raw };
     }
 
     @Post(`create/faker`)
@@ -81,14 +73,26 @@ export class BranchesController{
     @Put(`update/:id`)
     async updateBusinessbranch(@Param(`id`) id : number, @Body() revisions : updateVendorBranchDto){
 
-        /** Check if business is still active */
-        /** Check if the user is authorized user from the business */
-        /** Check if the user is allowed to do such things.. */
-        // if(!this.branchesService.isValid(id, revisions.updated_by)){
+        if(revisions.vendor_id){
 
-        //     revisions[`last_date_updated`] = moment().format(`YYYY-MM-DD HH:mm:ss`);
+            const vendor = await this.vendorService.getVendorInfoById({ id : revisions.vendor_id });
 
-        //     return await this.branchesService.updateVendorBranch(id, revisions);
-        // }
+            if(vendor){
+                throw new BadRequestException('Invalid Vendor ID..');
+            }
+
+            if(vendor.vendor_status === `Disabled`){
+                throw new BadRequestException('Vendor is not active..');
+            }
+        }
+
+        /** Apply additional validation here */
+
+        const _vendor = await this.branchesService.updateVendorBranch(id, revisions);
+
+        /** Apply business logic here */
+
+        return { payload : _vendor.generatedMaps, raw : _vendor.raw };
+
     }
 }

@@ -69,25 +69,25 @@ export class VendorsService{
         return _result;
     }
 
-    async updateVendor(id : string, revision : updateVendorDto){
+    async updateVendor(id : string, revisions : updateVendorDto){
 
-        const _revision : any = revision;
+        const _revision : any = revisions;
 
-        if(revision.days_open){
+        if(revisions.days_open){
 
-            _revision.days_open = revision.days_open.join(",");
+            _revision.days_open = revisions.days_open.join(",");
 
-            revision['days_closed'] = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].filter( day => revision.days_open.indexOf(day) <= -1 ).join(",");
+            _revision.days_closed = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].filter( day => revisions.days_open.indexOf(day) <= -1 ).join(",");
         };
 
-        if(revision.open_hours){
+        if(revisions.open_hours){
             
-            revision['closed_hours'] = moment(revision.open_hours, 'HH:mm').add(8,'hours').format('HH:mm');
+            _revision.closed_hours = moment(revisions.open_hours, 'HH:mm').add(8,'hours').format('HH:mm');
         };
 
-        const _result = await this.common.update(Number(id), revision);
+        const _result = await this.common.update(Number(id), _revision);
 
-        _result['payload'] = revision;
+        _result['payload'] = revisions;
 
         return _result;       
     }

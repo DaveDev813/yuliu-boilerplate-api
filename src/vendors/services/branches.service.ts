@@ -67,7 +67,24 @@ export class BranchesService{
 
     async updateVendorBranch(branchId : number, revisions : updateVendorBranchDto){
 
-        return await this.common.query(this.vendorBranchRepository).update(branchId, revisions);
+        const _branch : any = revisions;
+
+        if(_branch.days_open){
+
+            _branch.days_closed = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].filter( day => _branch.days_open.indexOf(day) <= -1).join(",");            
+            _branch.days_open = _branch.days_open.join(",");
+        }
+
+        if(_branch.open_hours){
+
+            _branch.closed_hours = moment(revisions.open_hours, 'HH:mm').add(8,'hours').format('HH:mm');
+        }
+
+        const _result = await this.common.update(Number(branchId), _branch);
+
+        _result['payload'] = _branch;
+
+        return _result;  
     }
 
     async isValid(vendorId : number, requestorId : number){

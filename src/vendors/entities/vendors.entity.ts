@@ -113,8 +113,8 @@ export class Vendor_Branches{
 
     //** Active, Disabled */
     @Column({ type : "varchar", default : () => "'Disabled'"})
-    branch_status : string;
-        
+    branch_status : string;        
+    
     @Column({ type : 'datetime', nullable : true })
     last_transaction_date : string;
 
