@@ -4,6 +4,8 @@ import { CommonQueries } from 'src/_commons/commons.orm';
 import { searchDto, primaryIdDto } from 'src/_commons/commons.dto';
 import { newVendorDto, updateVendorDto } from '../dto/vendor.dto';
 import { Vendors } from '../entities/vendors.entity';
+import voucherCodeGenerator = require('voucher-code-generator');
+import moment = require('moment');
 
 @Injectable()
 export class VendorsService{
@@ -39,16 +41,55 @@ export class VendorsService{
 
     async createVendor(vendor : newVendorDto){
 
-        /** Checks if valid phone number */
-         
-        return await this.common.insert(vendor);
+        const createdBy = 1;
+        
+        const _vendor   = {
+            code : voucherCodeGenerator.generate({ length : 5, count : 1, pattern : `#####`, prefix : `VENDOR-` })[0],
+            name : vendor.name,
+            description : vendor.description ? vendor.description : null,
+            email : vendor.email,
+            mobile_no : vendor.mobile_no,
+            telephone_no : vendor.telephone_no ? vendor.telephone_no : null,
+            days_open : vendor.days_open ? vendor.days_open.join(",") : null,
+            days_closed : vendor.days_open ? ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].filter( day => vendor.days_open.indexOf(day) <= -1 ).join(",") : null,
+            open_hours : vendor.open_hours ? vendor.open_hours : null,
+            closed_hours : vendor.open_hours ? moment(vendor.open_hours, 'HH:mm').add(8,'hours').format('HH:mm') : null,
+            address : vendor.address,
+            city : vendor.city,
+            business_type : vendor.business_type,
+            vendor_status : 'Deactivated',
+            account_type : 'Free',
+            created_by : createdBy
+        };
+
+        const _result      = await this.common.insert(_vendor);
+
+        _result['payload'] = _vendor;
+
+        return _result;
     }
 
     async updateVendor(id : string, revision : updateVendorDto){
 
-        const result = await this.common.update(Number(id), revision);
+        const _revision : any = revision;
 
-        return result;        
+        if(revision.days_open){
+
+            _revision.days_open = revision.days_open.join(",");
+
+            revision['days_closed'] = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].filter( day => revision.days_open.indexOf(day) <= -1 ).join(",");
+        };
+
+        if(revision.open_hours){
+            
+            revision['closed_hours'] = moment(revision.open_hours, 'HH:mm').add(8,'hours').format('HH:mm');
+        };
+
+        const _result = await this.common.update(Number(id), revision);
+
+        _result['payload'] = revision;
+
+        return _result;       
     }
 
     async deleteVendor(id : string){

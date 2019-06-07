@@ -28,17 +28,13 @@ export class VendorsController{
                 "name": faker.company.companyName(),
                 "description": faker.company.catchPhrase(),
                 "email": faker.internet.email(),
+                "days_open" : ["Mon"],
                 "mobile_no": faker.phone.phoneNumberFormat().replace("-", ""),
-                "telephone_no": voucherCodeGenerator.generate({ length : 7, charset : '0123456789' })[0],
-                "days_open": "Mon, Tue, Wed, Thu, Fri",
-                "days_closed" : "Sat, Sun",
+                "telephone_no": null,
                 "open_hours": "08:00",
-                "closed_hours": "20:00",
                 "address": `${faker.address.streetAddress()} ${faker.address.streetName()} ${faker.address.zipCode()}`,
                 "city": faker.address.city(),
-                "business_type": faker.company.bs(),
-                "account_type": "Free",
-                "created_by": 1
+                "business_type": faker.company.bs()
             }
 
             fakeVendor[`code`] = voucherCodeGenerator.generate({
@@ -57,33 +53,38 @@ export class VendorsController{
     @Post(`create`)
     async createVendor(@Body() vendor : newVendorDto){
 
-        vendor[`code`] = voucherCodeGenerator.generate({
-            length     : 5,
-            count      : 1,
-            pattern    : `#####`,
-            characters : voucherCodeGenerator.charset(`alphabetic`),
-            prefix     : `VND`,
-            suffix : moment().format(`YYYY`).toString()
-        })[0];
+        /** Apply additional validation here */
 
-        return await this.vendorsService.createVendor(vendor);
+        const _vendor = await this.vendorsService.createVendor(vendor);
+
+        /** Apply business logic here */
+
+        return { payload : _vendor.generatedMaps, raw : _vendor.raw };
     }
 
     @Put(`update/:id`)
     async updateVendor(@Param(`id`) id : string, @Body() revisions : updateVendorDto){
-        return await this.vendorsService.updateVendor(id, revisions);
+
+        /** Apply additional validation here */
+
+        const _vendor = await this.vendorsService.updateVendor(id, revisions);
+
+        /** Apply business logic here */
+
+        return { payload : _vendor.generatedMaps, raw : _vendor.raw };
     }
 
     @Post()
     async getVendors(@Body() options : searchDto){
+
         return await this.vendorsService.getVendors(options);
     }
 
     @Post(`:id`)
-    async getVendorInfo(@Body(`id`) identity : primaryIdDto){
-        return await this.vendorsService.getVendorInfoById(identity);
-    }
+    async getVendorInfo(@Param('id') id : number){
 
+        return await this.vendorsService.getVendorInfoById({ id : id });
+    }
 }
 
 

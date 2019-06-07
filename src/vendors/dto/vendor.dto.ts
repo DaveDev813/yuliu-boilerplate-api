@@ -1,54 +1,22 @@
 import { ApiModelProperty } from "@nestjs/swagger";
-import { IsString, IsEmail, MinLength, MaxLength, IsNumber } from "class-validator";
-import { Optional } from "@nestjs/common";
+import { IsString, IsEmail, MaxLength, IsNumber, Length, IsOptional, IsArray, IsIn, ArrayUnique, IsMilitaryTime, IsPhoneNumber, ArrayMaxSize, ArrayMinSize, ValidateNested } from "class-validator";
 
 export class newVendorDto{
 
     @ApiModelProperty()
     @IsString()
-    @MinLength(3)
-    @MaxLength(70)
+    @Length(3, 50)
     name : string;
-
-    @ApiModelProperty()
-    @Optional()
-    @IsString()
-    @MaxLength(200)
-    description ?: string;
 
     @ApiModelProperty()
     @IsEmail()
     email : string;
 
     @ApiModelProperty()
-    @Optional()
-    @IsNumber()
-    @MinLength(11)
-    @MaxLength(11)
-    mobile_no ?: number;
-    
-    @ApiModelProperty()
-    @Optional()
-    @IsNumber()
-    @MaxLength(7)
-    @MinLength(7) 
-    telephone_no ?: number;
-    
-    @ApiModelProperty()
     @IsString()
-    days_open : string;
-
-    @ApiModelProperty()
-    @IsString()
-    days_closed : string;
-
-    @ApiModelProperty()
-    @IsString()
-    open_hours : string;
-
-    @ApiModelProperty()
-    @IsString()
-    closed_hours : string;
+    @IsPhoneNumber(`PH`)
+    @Length(11, 11)
+    mobile_no : string;
 
     @ApiModelProperty()
     @IsString()
@@ -63,67 +31,105 @@ export class newVendorDto{
     @ApiModelProperty()
     @IsString()
     @MaxLength(200)
+    @IsIn(["Spa", "Salon", "Clinic", "Barber Shop"])
     business_type : string;
 
     @ApiModelProperty()
+    @IsOptional()
     @IsString()
-    account_type : string;
+    @Length(50, 1000)
+    description : string;
 
     @ApiModelProperty()
-    created_by : number;
+    @IsOptional()
+    @IsPhoneNumber(`PH`)
+    @Length(7, 7)
+    telephone_no : string;
+    
+    @ApiModelProperty()
+    @IsOptional()
+    @IsArray()
+    @ArrayUnique()
+    @ArrayMinSize(1)
+    @ArrayMaxSize(7)
+    @ValidateNested(    )
+    @IsIn(['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], { each : true })
+    days_open : string[];
+
+    @ApiModelProperty()
+    @IsOptional()
+    @IsMilitaryTime()
+    @IsString()
+    open_hours : string;
+
+
+    // @ApiModelProperty()
+    // @IsString()
+    // account_type : string;
+
+    // @ApiModelProperty()
+    // created_by : number;
 }
 
 export class updateVendorDto{
 
     @ApiModelProperty()
+    @IsOptional()
     @IsString()
-    @MinLength(3)
-    @MaxLength(20)
+    @Length(3, 50)
     name : string;
 
     @ApiModelProperty()
-    @Optional()
+    @IsOptional()
     @IsString()
-    @MaxLength(200)
-    description ?: string;
+    @IsPhoneNumber(`PH`)
+    @Length(11, 11)
+    mobile_no : string;
 
     @ApiModelProperty()
-    @IsEmail()
-    email : string;
-
-    @ApiModelProperty()
-    @Optional()
-    @IsString()
-    @MinLength(15)
-    @MaxLength(15)
-    mobile_no ?: string;
-    
-    @ApiModelProperty()
-    @Optional()
-    @IsString()
-    @MaxLength(10)
-    @MinLength(10) 
-    telephone_no ?: string;
-    
-    @ApiModelProperty()
-    @IsString()
-    @Optional()
-    business_hours ?: string;
-
-    @ApiModelProperty()
-    @IsString()
-    business_type : string;
-
-    @ApiModelProperty()
+    @IsOptional()
     @IsString()
     @MaxLength(200)
     address : string;
 
     @ApiModelProperty()
+    @IsOptional()
     @IsString()
-    vendor_type : string;
+    @MaxLength(200)
+    city : string;
 
     @ApiModelProperty()
+    @IsOptional()
     @IsString()
-    vendor_status : string;
+    @Length(50, 1000)
+    description : string;
+
+    @ApiModelProperty()
+    @IsOptional()
+    @IsPhoneNumber(`PH`)
+    @Length(7, 7)
+    telephone_no : string;
+    
+    @ApiModelProperty()
+    @IsOptional()
+    @IsArray()
+    @ArrayUnique()
+    @ArrayMinSize(1)
+    @ArrayMaxSize(7)
+    @ValidateNested()
+    @IsIn(['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], { each : true })
+    days_open : string[];
+
+    @ApiModelProperty()
+    @IsOptional()
+    @IsMilitaryTime()
+    @IsString()
+    open_hours : string;
+
+    // @ApiModelProperty()
+    // @IsString()
+    // account_type : string;
+
+    // @ApiModelProperty()
+    // created_by : number;
 }
