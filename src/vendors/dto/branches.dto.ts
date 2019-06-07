@@ -1,5 +1,5 @@
 import { ApiModelProperty } from "@nestjs/swagger";
-import { IsString, IsEmail, MinLength, MaxLength, IsNumber, IsNotEmpty } from "class-validator";
+import { IsString, IsEmail, MinLength, MaxLength, IsNumber, IsNotEmpty, IsPhoneNumber, IsOptional, Length, IsArray, ArrayUnique, ArrayMinSize, ArrayMaxSize, ValidateNested, IsIn, IsMilitaryTime } from "class-validator";
 import { Optional } from "@nestjs/common";
 import { Timestamp } from "typeorm";
 
@@ -11,27 +11,14 @@ export class newVendorBranchDto{
 
     @ApiModelProperty()
     @IsString()
-    @IsNotEmpty()
+    @Length(3, 30)
+    contact_person : string;
+
+    @ApiModelProperty()
+    @IsString()
+    @Length(11, 11)
+    @IsPhoneNumber(`PH`)
     mobile_no : string;
-
-    @ApiModelProperty()
-    @Optional()
-    telephone_no ?: string;
-
-    @ApiModelProperty()
-    @IsString()
-    @IsNotEmpty()
-    business_days : string;
-
-    @ApiModelProperty()
-    @IsString()
-    @IsNotEmpty()
-    open_hours : string;
-
-    @ApiModelProperty()
-    @IsString()
-    @IsNotEmpty()
-    closing_hours : string;
 
     @ApiModelProperty()
     @IsString()
@@ -44,41 +31,80 @@ export class newVendorBranchDto{
     city : string;
 
     @ApiModelProperty()
-    @IsNumber()
-    created_by : number;
+    @IsOptional()
+    @IsString()
+    @IsPhoneNumber(`PH`)
+    @Length(7, 7)
+    telephone_no : string;
+
+    @ApiModelProperty()
+    @IsOptional()
+    @IsArray()
+    @ArrayUnique()
+    @ArrayMinSize(1)
+    @ArrayMaxSize(7)
+    @ValidateNested()
+    @IsIn(['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], { each : true })
+    days_open : string[];
+
+    @ApiModelProperty()
+    @IsOptional()
+    @IsMilitaryTime()
+    @IsString()
+    open_hours : string;
 }
 
 export class updateVendorBranchDto{
 
     @ApiModelProperty()
-    @Optional()
-    mobile_no ?: string;
-
-    @ApiModelProperty()
-    @Optional()
-    telephone_no ?: string;
-
-    @ApiModelProperty()
-    @Optional()
-    business_days ?: string;
-
-    @ApiModelProperty()
-    @Optional()
-    open_hours ?: Timestamp;
-
-    @ApiModelProperty()
-    @Optional()
-    closing_hours ?: Timestamp;
-
-    @ApiModelProperty()
-    @Optional()
-    address ?: string;
-    
-    @ApiModelProperty()
-    @Optional()
-    city ?: string;
-    
-    @ApiModelProperty()
+    @IsOptional()
     @IsNumber()
-    updated_by : number;
+    vendor_id : number;
+
+    @ApiModelProperty()
+    @IsOptional()
+    @IsString()
+    @Length(3, 30)
+    contact_person : string;
+
+    @ApiModelProperty()
+    @IsOptional()
+    @IsString()
+    @Length(11, 11)
+    @IsPhoneNumber(`PH`)
+    mobile_no : string;
+
+    @ApiModelProperty()
+    @IsOptional()
+    @IsString()
+    address : string;
+    
+    @ApiModelProperty()
+    @IsOptional()
+    @IsString()
+    city : string;
+    
+    @ApiModelProperty()
+    @IsOptional()
+    @IsString()
+    @IsPhoneNumber(`PH`)
+    @Length(7, 7)
+    telephone_no : string;
+
+    @ApiModelProperty()
+    @IsOptional()
+    @IsArray()
+    @ArrayUnique()
+    @ArrayMinSize(1)
+    @ArrayMaxSize(7)
+    @ValidateNested()
+    @IsIn(['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], { each : true })
+    days_open : string[];
+
+    @ApiModelProperty()
+    @IsOptional()
+    @IsMilitaryTime()
+    @IsString()
+    open_hours : string;
+
 }

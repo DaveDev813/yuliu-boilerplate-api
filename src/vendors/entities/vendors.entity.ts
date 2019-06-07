@@ -93,15 +93,17 @@ export class Vendor_Branches{
     @Column({ type : "varchar", nullable : true, default : () => "'N/A'" })
     telephone_no : string;
 
-    /** e.g Mon,Tues,Thurs,Fri,Sat */
     @Column({ type : 'varchar', nullable : false })
-    business_days : string;
-    
+    days_open : string;
+
     @Column({ type : 'varchar', nullable : false })
+    days_closed : string;
+
+    @Column({type : 'time', nullable : false })
     open_hours : string;
 
-    @Column({ type : 'time', nullable : false })
-    closing_hours : string
+    @Column({type : 'time', nullable : false })
+    closed_hours : string
 
     @Column({ type : "longtext", nullable : false })
     address : string;

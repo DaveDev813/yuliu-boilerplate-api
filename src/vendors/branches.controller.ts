@@ -32,21 +32,16 @@ export class BranchesController{
         /** Check if business is still active */
         /** Check if the user is authorized user from the business */
         /** Check if the user is allowed to do such things.. */
-        const valid : { error : boolean, message : string } = await this.branchesService.isValid(branch.vendor_id, branch.created_by);
+        // const valid : { error : boolean, message : string } = await this.branchesService.isValid(branch.vendor_id, branch.created_by);
 
-        if(valid.error){ throw new BadRequestException(valid.message); }
-
-        branch[`branch_status`] = `Disabled`;
-        branch[`branch_code`]   = voucherCodeGenerator.generate({
-            length     : 5,
-            count      : 4,
-            pattern    : `####`,
-            characters : voucherCodeGenerator.charset(`alphabetic`),
-            prefix     : `VND${branch.vendor_id.toString().padStart(4, `0`)}`
-        });
-
+        // if(valid.error){ throw new BadRequestException(valid.message); }
         return await this.branchesService.createBranch(branch);
     }
+
+    @Post(`create/faker`)
+    async createFakeBraches(){
+
+    }    
 
     @Put(`update/:id`)
     async updateBusinessbranch(@Param(`id`) id : number, @Body() revisions : updateVendorBranchDto){
@@ -54,11 +49,11 @@ export class BranchesController{
         /** Check if business is still active */
         /** Check if the user is authorized user from the business */
         /** Check if the user is allowed to do such things.. */
-        if(!this.branchesService.isValid(id, revisions.updated_by)){
+        // if(!this.branchesService.isValid(id, revisions.updated_by)){
 
-            revisions[`last_date_updated`] = moment().format(`YYYY-MM-DD HH:mm:ss`);
+        //     revisions[`last_date_updated`] = moment().format(`YYYY-MM-DD HH:mm:ss`);
 
-            return await this.branchesService.updateVendorBranch(id, revisions);
-        }
+        //     return await this.branchesService.updateVendorBranch(id, revisions);
+        // }
     }
 }

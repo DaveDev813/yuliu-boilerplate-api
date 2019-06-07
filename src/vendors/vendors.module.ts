@@ -17,7 +17,7 @@ import { BranchesService } from './services/branches.service';
         PassportModule.register({ defaultStrategy: 'bearer' })
     ],
     controllers : [ 
-        VendorsController
+        VendorsController, BranchesController
     ],
     providers : [
         CommonQueries,
