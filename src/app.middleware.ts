@@ -46,9 +46,13 @@ export class Logger implements NestMiddleware{
         const file = `logs/${moment().format("MM-DD-YYYY")}.log`;        
         const requestData = `[${moment().format("HH:mm:ss")}] ${JSON.stringify({ header : request.headers, body : request.body })}\r\n`;
 
+        if(!fs.existsSync(`logs/`)){
+            fs.mkdirSync(`logs/`);
+        }
+
         fs.writeFile(file, requestData, { flag : "a+" }, (err) => {
 
-            if(err){ next(new BadRequestException("Unexpected Error Occured..")); }
+            if(err){ next(new BadRequestException(err.message)); }
             
             next();
         });
