@@ -11,8 +11,6 @@ import { Logger } from './app.middleware';
 import { CommonQueries } from './_commons/commons.orm';
 import { VendorServiceController } from './vendors/vendor-service.controller';
 import { VendorServiceService } from './vendor-service/vendor-service.service';
-import { AddressbookService } from './clients/services/addressbook.service';
-import { AddressbookController } from './clients/addressbook.controller';
 
 @Module({
   imports: [
@@ -28,7 +26,6 @@ import { AddressbookController } from './clients/addressbook.controller';
     UsersService,
     HttpStrategy,
     VendorServiceService,
-    AddressbookService,
   ]
 })
 export class AppModule implements NestModule{
