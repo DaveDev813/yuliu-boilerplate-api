@@ -1,5 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import { Entity, Repository, Like } from "typeorm";
+import { Entity, Repository, Like, SelectQueryBuilder, ObjectLiteral, EntityOptions } from "typeorm";
+import { searchDto } from "./commons.dto";
+import { ClassProvider } from "@nestjs/common/interfaces";
 
 @Injectable()
 export class CommonQueries{
@@ -13,6 +15,40 @@ export class CommonQueries{
         this.repository = repo;
 
         return this;
+    }
+
+    async conditions(query : SelectQueryBuilder<ObjectLiteral>, conditions : Array<Function>){
+
+        if(conditions && conditions.length){
+
+            let cond : { clause : string, filter : string };
+
+            conditions.forEach( async fn => {
+
+                cond = await fn();
+
+                query[cond.clause](cond.filter);
+            });
+        }
+
+        return query;
+    }
+
+    async like(query : SelectQueryBuilder<any>, likeCondition : { [key:string] : any }){
+        
+        if(likeCondition.columns && likeCondition.keyword){
+
+            likeCondition.columns.forEach( (column, i) => {
+
+                if(!i){
+                    query.where(`${column} LIKE :key`, { key : `%${likeCondition.keyword}%` });
+                }else{
+                    query.orWhere(`${column} LIKE :key`, { key : `%${likeCondition.keyword}%` });
+                }
+            });
+        }
+
+        return query;
     }
 
     private setColumnsToSearch(columns : Array<string>, keyword : any){
@@ -68,18 +104,6 @@ export class CommonQueries{
          * Additional conditions for filtering the table
          */
         
-        if(conditions && conditions.length){
-
-            let cond : { clause : string, filter : string };
-
-            conditions.forEach( fn => {
-
-                cond = fn();
-
-                query[cond.clause](cond.filter);
-
-            });
-        }
 
         const totalRows : number = await query.getCount();
 

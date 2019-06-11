@@ -18,22 +18,10 @@ export class BranchesController{
         private readonly branchesService : BranchesService){
     }
 
-    @Post(`branch/:id`)
-    async getBranchById(@Param(`id`) branchId : number){
-
-        return await this.branchesService.getBranchById(branchId);
-    }
-
-    @Post(`:id/branches`)
-    async getVendorBranches(@Param(`id`) vendorId : number, @Body() options : searchDto){
-
-        return await this.branchesService.getBranchesByVendorId(vendorId, options);
-    }
-
     @Post(`create`)
-    async createBusinessBranch(@Body() branch : newVendorBranchDto){   
+    async createBranch(@Body() branch : newVendorBranchDto){   
 
-        const vendor = await this.vendorService.getVendorInfoById({ id : branch.vendor_id });
+        const vendor = await this.vendorService.getVendorById(branch.vendor_id);
 
         if(vendor){
             throw new BadRequestException('Invalid Vendor ID..');
@@ -71,28 +59,30 @@ export class BranchesController{
     }    
 
     @Put(`update/:id`)
-    async updateBusinessbranch(@Param(`id`) id : number, @Body() revisions : updateVendorBranchDto){
+    async updateBranch(@Param(`id`) branchId : number, @Body() revisions : updateVendorBranchDto){
 
         if(revisions.vendor_id){
 
-            const vendor = await this.vendorService.getVendorInfoById({ id : revisions.vendor_id });
+            const vendor = await this.vendorService.getVendorById(revisions.vendor_id);
 
-            if(vendor){
-                throw new BadRequestException('Invalid Vendor ID..');
-            }
+            if(vendor){ throw new BadRequestException('Invalid Vendor ID..'); }
 
-            if(vendor.vendor_status === `Disabled`){
-                throw new BadRequestException('Vendor is not active..');
-            }
+            if(vendor.vendor_status === `Disabled`){ throw new BadRequestException('Vendor is not active..'); }
         }
 
-        /** Apply additional validation here */
-
-        const _vendor = await this.branchesService.updateVendorBranch(id, revisions);
-
-        /** Apply business logic here */
+        const _vendor = await this.branchesService.updateVendorBranch(branchId, revisions);
 
         return { payload : _vendor.generatedMaps, raw : _vendor.raw };
+    }
 
+    @Post(`branch/:id`)
+    async getBranchInfo(@Param(`id`) branchId : number){
+
+        /**
+         * @TODO 
+         * INCLUDE THE VENDOR INFORMATION IN THE PAYLOAD
+         */
+
+        return await this.branchesService.getBranchById(branchId);
     }
 }

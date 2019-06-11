@@ -10,13 +10,13 @@ import moment = require('moment');
 @Injectable()
 export class VendorsService{
 
-    private searchColumns = ['name', 'description', 'business_type', 'email'];
+    private search_columns = ['name', 'description', 'business_type', 'email'];
 
     constructor(
         private readonly common : CommonQueries,
-        @Inject('VENDOR_REPOSITORY') private readonly vendorRepository : Repository<Vendors>){
+        @Inject('VENDOR_REPOSITORY') private readonly VENDOR_REPOSITORY : Repository<Vendors>){
 
-        this.common.query(this.vendorRepository)
+        this.common.query(this.VENDOR_REPOSITORY)
     }
 
     async isUserFromVendor(user : number, vendor : number){
@@ -27,16 +27,40 @@ export class VendorsService{
         return true;
     }
 
-    async getVendorInfoById(identity : primaryIdDto){
+    async getVendorById(vendorId : number){
 
-        return await this.vendorRepository.findOne(identity.id);
+        return await this.VENDOR_REPOSITORY.findOne(vendorId);
     }
 
     async getVendors(options : searchDto){
 
-        const result = await this.common.read(Number(options.limit), Number(options.offset), options.keyword, this.searchColumns);
+        const query = await this.VENDOR_REPOSITORY
+        .createQueryBuilder()
+        .select();
 
-        return result;        
+        if(options.keyword){
+            this.search_columns.forEach( (column, i) => {
+                if(!i){
+                    query.where(`${column} LIKE :key`, { key : `%${options.keyword}%` });
+                }else{
+                    query.orWhere(`${column} LIKE :key`, { key : `%${options.keyword}%` });
+                }
+            });
+        }
+
+        const rows : Array<Vendors> = await query
+        .limit(options.limit)
+        .offset(options.limit * options.offset)
+        .getMany();
+            
+        const total : number = await query.getCount();
+
+        return{
+            rows : rows,
+            total : total,
+            offset : options.offset,
+            keyword : (options.keyword) ? options.keyword : null
+        }
     }
 
     async createVendor(vendor : newVendorDto){
@@ -62,14 +86,14 @@ export class VendorsService{
             created_by : createdBy
         };
 
-        const _result      = await this.common.insert(_vendor);
+        const _result      = await this.VENDOR_REPOSITORY.insert(_vendor);
 
         _result['payload'] = _vendor;
 
         return _result;
     }
 
-    async updateVendor(id : string, revisions : updateVendorDto){
+    async updateVendor(vendorId : number, revisions : updateVendorDto){
 
         const _revision : any = revisions;
 
@@ -85,17 +109,10 @@ export class VendorsService{
             _revision.closed_hours = moment(revisions.open_hours, 'HH:mm').add(8,'hours').format('HH:mm');
         };
 
-        const _result = await this.common.update(Number(id), _revision);
+        const _result = await this.common.update(vendorId, _revision);
 
         _result['payload'] = revisions;
 
         return _result;       
-    }
-
-    async deleteVendor(id : string){
-
-        const result = await this.common.delete(Number(id));
-
-        return result;
     }
 }

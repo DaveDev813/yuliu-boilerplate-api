@@ -2,7 +2,7 @@ import { Injectable, BadRequestException, Inject } from '@nestjs/common';
 import { VendorsService } from './vendors.service';
 import { CommonQueries } from 'src/_commons/commons.orm';
 import { Repository } from 'typeorm';
-import { Vendor_Branches } from '../entities/vendors.entity';
+import { VendorBranches } from '../entities/vendors.entity';
 import { newVendorBranchDto, updateVendorBranchDto } from '../dto/branches.dto';
 import { searchDto } from 'src/_commons/commons.dto';
 import voucherCodeGenerator = require('voucher-code-generator');
@@ -11,12 +11,58 @@ import moment = require('moment');
 @Injectable()
 export class BranchesService{
 
+    private search_columns = ["branch_code", "contact_person", "city", "address"];
+
     constructor(
         private readonly common : CommonQueries,
         private readonly vendorsService : VendorsService,
-        @Inject('VENDOR_BRANCH_REPOSITORY') private readonly vendorBranchRepository : Repository<Vendor_Branches>){        
+        @Inject('VENDOR_BRANCH_REPOSITORY') private readonly vendorBranchRepository : Repository<VendorBranches>){        
             
-            this.common.query(this.vendorBranchRepository);
+        this.common.query(this.vendorBranchRepository);
+    }
+    
+    async getBranchesByVendorId(vendorId: number, options : searchDto, conditions ?: Array<Function>){
+
+        const query = this.vendorBranchRepository
+        .createQueryBuilder()
+        .select();
+
+        if(options.keyword){
+
+            this.search_columns.forEach( (col, i) => {
+                if(!i){
+                    query.where(`${col} LIKE :key`, { key : `%${options.keyword}%` });
+                }else{
+                    query.orWhere(`${col} LIKE :key`, { key : `%${options.keyword}%` });
+                }
+            });
+        }
+
+        query.andWhere(`vendor_id = :vendor`, { vendor : vendorId});
+
+        const total : number = await query.getCount();
+        const rows : Array<VendorBranches> = await query.
+        limit(options.limit)
+        .offset(options.limit * options.offset)
+        .getMany();
+
+        return{
+            rows : rows,
+            total : total,
+            offset : options.offset,
+            keyword : (options.keyword) ? options.keyword : null
+        }
+    }
+
+    async getBranches(options : searchDto, conditions ?: Array<Function>){
+        
+        const search_columns = ["branch_code", "contact_person", "city", "address"];
+
+        const result = await this.common
+        .query(this.vendorBranchRepository)
+        .read(options.limit, options.offset, options.keyword, search_columns, conditions);
+
+        return result;
     }
 
     async getBranchById( branchId : number ){
@@ -27,22 +73,8 @@ export class BranchesService{
         return await this.vendorBranchRepository.findOne({ branch_code : branchCode });
     }
 
-    async getBranchBy( filter : Vendor_Branches ){
-        return await this.vendorBranchRepository.find(filter);
-    }
-
-    async getBranchesByVendorId( vendorId : number, options : searchDto ){
-        
-        return await this.common.read(options.limit, options.offset, options.keyword, [
-            'branch_code',
-            'contact_person',
-            'mobile_no',
-            'telephone_no',
-            'address',
-            'city',
-        ], [
-            () => ({ clause : 'andWhere', filter : { vendor_id : vendorId } })
-        ]);
+    async getBranchBy( conditions : { [key:string] : any } ){
+        return await this.vendorBranchRepository.find(conditions);
     }
 
     async createBranch(branch : newVendorBranchDto){
@@ -89,7 +121,7 @@ export class BranchesService{
 
     async isValid(vendorId : number, requestorId : number){
 
-        const vendor_info = await this.vendorsService.getVendorInfoById({ id : vendorId });
+        const vendor_info = await this.vendorsService.getVendorById(vendorId);
 
         if(!vendor_info){
             return { error : true, message : `Business does not exists...` };

@@ -2,21 +2,88 @@ import { Controller, UseGuards, Post, Body, Put, Param, BadRequestException } fr
 import { ApiUseTags, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { VendorsService } from './/services/vendors.service';
-import { searchDto, primaryIdDto } from 'src/_commons/commons.dto';
+import { searchDto } from 'src/_commons/commons.dto';
 import { newVendorDto, updateVendorDto } from './dto/vendor.dto';
+import { BranchesService } from './services/branches.service';
+import { ProductsService } from './services/products.service';
 import voucherCodeGenerator = require('voucher-code-generator');
 import moment = require('moment');
 import faker = require('faker');
 import _ = require('lodash');
 
 @ApiUseTags(`Vendors`)
-@UseGuards(AuthGuard())
-@ApiBearerAuth()
+// @UseGuards(AuthGuard())
+// @ApiBearerAuth()
 @Controller(`vendors`)
 export class VendorsController{
 
     constructor(
-        private readonly vendorsService : VendorsService){
+        private readonly ProductService : ProductsService,
+        private readonly BranchesService : BranchesService,
+        private readonly VendorService : VendorsService){
+    }
+
+    @Post()
+    async getVendors(@Body() options : searchDto){
+    
+        return await this.VendorService.getVendors(options);
+    }
+
+    @Post(`:id`)
+    async getVendorInformation(@Param('id') vendorId : number){
+
+        return await this.VendorService.getVendorById(vendorId);
+    }    
+
+    @Post(`:id/employees`)
+    async getVendorEmployees(@Param(`id`) vendorId : number, @Body() options : searchDto){
+
+    }
+    
+    @Post(`:id/branches`)
+    async getVendorBranches(@Param(`id`) vendorId : number, @Body() options : searchDto){
+
+        const vendor = await this.VendorService.getVendorById(vendorId);
+    
+        if(vendor){
+
+            const branches = await this.BranchesService.getBranchesByVendorId(vendorId, options);
+
+            return { branches : branches, vendor : vendor };
+        }
+
+        throw new BadRequestException('Vendor not found..');
+    }
+
+    @Post(':id/products')
+    async getVendorProducts(@Param(`id`) vendorId : number, @Body() options : searchDto){
+
+        const vendor = await this.VendorService.getVendorById(vendorId);
+        
+        if(vendor){
+
+            const products = await this.ProductService.getProductsByVendorId(vendorId, options);
+        
+            return { vendor : vendor, products : products };
+        }
+
+        throw new BadRequestException('Vendor not found..');
+    }
+
+    @Post(`create`)
+    async createVendor(@Body() vendor : newVendorDto){
+
+        const _vendor = await this.VendorService.createVendor(vendor);
+
+        return { payload : _vendor.generatedMaps, raw : _vendor.raw };
+    }
+
+    @Put(`update/:id`)
+    async updateVendor(@Param(`id`) vendorId : number, @Body() revisions : updateVendorDto){
+
+        const _vendor = await this.VendorService.updateVendor(vendorId, revisions);
+
+        return { payload : _vendor.generatedMaps, raw : _vendor.raw };
     }
 
     @Post('create/faker')
@@ -46,45 +113,7 @@ export class VendorsController{
                 suffix : moment().format(`YYYY`).toString()
             })[0];
     
-            await this.vendorsService.createVendor(fakeVendor);
+            await this.VendorService.createVendor(fakeVendor);
         });
     }
-
-    @Post(`create`)
-    async createVendor(@Body() vendor : newVendorDto){
-
-        /** Apply additional validation here */
-
-        const _vendor = await this.vendorsService.createVendor(vendor);
-
-        /** Apply business logic here */
-
-        return { payload : _vendor.generatedMaps, raw : _vendor.raw };
-    }
-
-    @Put(`update/:id`)
-    async updateVendor(@Param(`id`) id : string, @Body() revisions : updateVendorDto){
-
-        /** Apply additional validation here */
-
-        const _vendor = await this.vendorsService.updateVendor(id, revisions);
-
-        /** Apply business logic here */
-
-        return { payload : _vendor.generatedMaps, raw : _vendor.raw };
-    }
-
-    @Post()
-    async getVendors(@Body() options : searchDto){
-
-        return await this.vendorsService.getVendors(options);
-    }
-
-    @Post(`:id`)
-    async getVendorInfo(@Param('id') id : number){
-
-        return await this.vendorsService.getVendorInfoById({ id : id });
-    }
 }
-
-

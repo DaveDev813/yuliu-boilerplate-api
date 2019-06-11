@@ -73,7 +73,7 @@ export class Vendors{
 }
 
 @Entity()
-export class Vendor_Branches{
+export class VendorBranches{
     
     @PrimaryGeneratedColumn() 
     id: number;
@@ -132,7 +132,60 @@ export class Vendor_Branches{
 }
 
 @Entity()
-export class Vendor_Employee{
+export class VendorProducts{
+
+    @PrimaryGeneratedColumn() 
+    id: number;
+
+    @Column({type : 'integer', nullable : false })
+    vendor_id : number;
+
+    @Column({type : 'integer', nullable : false })
+    branch_id : number;
+
+    @Column({type : 'varchar', nullable : false, unique : true })
+    product_code : string;
+    
+    @Column({type : 'varchar', nullable : false })
+    name : string;
+
+    @Column({type : 'longtext', nullable : true })
+    description : string;
+
+    @Column({type : 'varchar', nullable : true, default : () => "'Service'" })
+    product_type : string;
+
+    @Column({type : 'varchar', nullable : true, default : () => "'N/A'" })
+    duration : string;
+
+    @Column({type : 'double precision', nullable : false, default : () => 0.00 })
+    product_cost : number;
+
+    @Column({type : 'double precision', nullable : false, default : () => 0.00 })
+    product_price : number;
+
+    @Column({type : 'double precision', nullable : false, default : () => 0.00 })
+    product_comission : number;
+        
+    @Column({type : 'double precision', nullable : true, default : () => 0.00 })
+    rating : number;
+
+    @Column({type : 'integer', nullable : true })
+    updated_by : number;
+
+    @Column({ type : 'datetime', nullable : true })
+    last_date_updated : string;
+
+    @Column({type : 'integer', nullable : false })
+    created_by : number;
+
+    @Column({type : 'datetime', default : () => "CURRENT_TIMESTAMP" })
+    date_created : string;
+}
+
+
+@Entity()
+export class VendorEmployees{
 
     @PrimaryGeneratedColumn() 
     id: number;
@@ -182,56 +235,7 @@ export class Vendor_Employee{
 }
 
 @Entity()
-export class Vendor_Services{
-
-    @PrimaryGeneratedColumn() 
-    id: number;
-
-    @Column({type : 'integer', nullable : false })
-    vendor_id : number;
-
-    @Column({type : 'integer', nullable : false })
-    branch_id : number;
-
-    @Column({type : 'varchar', nullable : false, unique : true })
-    service_code : string;
-    
-    @Column({type : 'varchar', nullable : false })
-    name : string;
-
-    @Column({type : 'longtext', nullable : true })
-    description : string;
-
-    @Column({type : 'varchar', nullable : true, default : () => "'N/A'" })
-    duration : string;
-
-    @Column({type : 'double precision', nullable : true, default : () => 0.00 })
-    original_price : number;
-
-    @Column({type : 'double precision', nullable : true, default : () => 0.00 })
-    retail_price : number;
-
-    @Column({type : 'double precision', nullable : true, default : () => 0.00 })
-    percent_comission : number;
-    
-    @Column({type : 'double precision', nullable : true, default : () => 0.00 })
-    rating : number;
-
-    @Column({type : 'integer', nullable : true })
-    updated_by : number;
-
-    @Column({ type : 'datetime', nullable : true })
-    last_date_updated : string;
-
-    @Column({type : 'integer', nullable : false })
-    created_by : number;
-
-    @Column({type : 'datetime', default : () => "CURRENT_TIMESTAMP" })
-    date_created : string;
-}
-
-@Entity()
-export class Vendor_Users{
+export class VendorUsers{
 
     @PrimaryGeneratedColumn() 
     id: number;

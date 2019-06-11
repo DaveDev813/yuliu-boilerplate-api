@@ -7,9 +7,11 @@ import { userProviders } from 'src/users/users.providers';
 import { UsersService } from 'src/users/users.service';
 import { VendorsService } from './services/vendors.service';
 import { CommonQueries } from 'src/_commons/commons.orm';
-import { vendorProviders, branchProviders, employeeProviders, servicesProviders } from './vendors.provider';
+import { vendorProviders, branchProviders, employeeProviders, productProviders } from './vendors.provider';
 import { BranchesController } from './branches.controller';
 import { BranchesService } from './services/branches.service';
+import { ProductsController } from './products.controller';
+import { ProductsService } from './services/products.service';
 
 @Module({
     imports: [
@@ -17,18 +19,19 @@ import { BranchesService } from './services/branches.service';
         PassportModule.register({ defaultStrategy: 'bearer' })
     ],
     controllers : [ 
-        VendorsController, BranchesController
+        VendorsController, BranchesController, ProductsController
     ],
     providers : [
-        ...userProviders,
-        ...vendorProviders,
-        ...branchProviders,
-        ...employeeProviders,
-        ...servicesProviders,
         CommonQueries,
+        ...userProviders,
         UsersService,
-        BranchesService,
+        ...vendorProviders,
         VendorsService,
+        ...branchProviders,
+        BranchesService,
+        ...productProviders,
+        ProductsService,
+        ...employeeProviders
     ]
 })
 export class VendorsModule{}
