@@ -195,7 +195,7 @@ export class VendorEmployees{
 
     /** Vendor_business_address */
     @Column({ type : "integer", nullable : false }) 
-    business_address_id : number;
+    branch_id : number;
         
     @Column({ type : "varchar", nullable : false, unique : true })
     employee_code : string;
@@ -210,7 +210,7 @@ export class VendorEmployees{
     position : string;
 
     @Column({type : 'double precision', nullable : true, default : () => 0.00 })
-    percent_comission_to_vendor : number;
+    comission_to_vendor : number;
     
     @Column({type : 'double precision', nullable : true, default : () => 0.00 })
     overall_rating : number;
