@@ -7,7 +7,7 @@ import { clientProviders } from './clients.providers';
 import { DatabaseModule } from 'src/_database/database.module';
 import { userProviders } from 'src/users/users.providers';
 import { JWTChecker, Logger } from 'src/app.middleware';
-import { CommonQueries } from 'src/_commons/crud.orm';
+import { CommonQueries } from 'src/_commons/commons.orm';
 
 @Module({
     imports: [

@@ -71,7 +71,7 @@ export class Users{
     /**
      * The last transaction date the app has made
      */
-    @Column({ type : 'datetime', nullable : false })
+    @Column({ type : 'datetime', nullable : true })
     last_transaction_date : string;
 
     @Column({ type : 'datetime', default : () => "CURRENT_TIMESTAMP" })

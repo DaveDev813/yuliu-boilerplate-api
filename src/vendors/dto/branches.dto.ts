@@ -1,58 +1,47 @@
 import { ApiModelProperty } from "@nestjs/swagger";
-import { IsString, IsEmail, MaxLength, IsNumber, Length, IsOptional, IsArray, IsIn, ArrayUnique, IsMilitaryTime, IsPhoneNumber, ArrayMaxSize, ArrayMinSize, ValidateNested } from "class-validator";
+import { IsString, IsNumber, IsNotEmpty, IsPhoneNumber, IsOptional, Length, IsArray, ArrayUnique, ArrayMinSize, ArrayMaxSize, ValidateNested, IsIn, IsMilitaryTime } from "class-validator";
 
-export class newVendorDto{
+export class newVendorBranchDto{
+
+    @ApiModelProperty()
+    @IsNumber()
+    vendor_id : number;
 
     @ApiModelProperty()
     @IsString()
-    @Length(3, 50)
-    name : string;
-
-    @ApiModelProperty()
-    @IsEmail()
-    email : string;
+    @Length(3, 30)
+    contact_person : string;
 
     @ApiModelProperty()
     @IsString()
-    @IsPhoneNumber(`PH`)
     @Length(11, 11)
+    @IsPhoneNumber(`PH`)
     mobile_no : string;
 
     @ApiModelProperty()
     @IsString()
-    @MaxLength(200)
+    @IsNotEmpty()
     address : string;
-
+    
     @ApiModelProperty()
     @IsString()
-    @MaxLength(200)
+    @IsNotEmpty()
     city : string;
 
     @ApiModelProperty()
-    @IsString()
-    @MaxLength(200)
-    @IsIn(["Spa", "Salon", "Clinic", "Barber Shop"])
-    business_type : string;
-
-    @ApiModelProperty()
     @IsOptional()
     @IsString()
-    @Length(50, 1000)
-    description : string;
-
-    @ApiModelProperty()
-    @IsOptional()
     @IsPhoneNumber(`PH`)
     @Length(7, 7)
     telephone_no : string;
-    
+
     @ApiModelProperty()
     @IsOptional()
     @IsArray()
     @ArrayUnique()
     @ArrayMinSize(1)
     @ArrayMaxSize(7)
-    @ValidateNested(    )
+    @ValidateNested()
     @IsIn(['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], { each : true })
     days_open : string[];
 
@@ -61,55 +50,45 @@ export class newVendorDto{
     @IsMilitaryTime()
     @IsString()
     open_hours : string;
-
-
-    // @ApiModelProperty()
-    // @IsString()
-    // account_type : string;
-
-    // @ApiModelProperty()
-    // created_by : number;
 }
 
-export class updateVendorDto{
+export class updateVendorBranchDto{
+
+    @ApiModelProperty()
+    @IsOptional()
+    @IsNumber()
+    vendor_id : number;
 
     @ApiModelProperty()
     @IsOptional()
     @IsString()
-    @Length(3, 50)
-    name : string;
+    @Length(3, 30)
+    contact_person : string;
 
     @ApiModelProperty()
     @IsOptional()
     @IsString()
-    @IsPhoneNumber(`PH`)
     @Length(11, 11)
+    @IsPhoneNumber(`PH`)
     mobile_no : string;
 
     @ApiModelProperty()
     @IsOptional()
     @IsString()
-    @MaxLength(200)
     address : string;
-
+    
     @ApiModelProperty()
     @IsOptional()
     @IsString()
-    @MaxLength(200)
     city : string;
-
+    
     @ApiModelProperty()
     @IsOptional()
     @IsString()
-    @Length(50, 1000)
-    description : string;
-
-    @ApiModelProperty()
-    @IsOptional()
     @IsPhoneNumber(`PH`)
     @Length(7, 7)
     telephone_no : string;
-    
+
     @ApiModelProperty()
     @IsOptional()
     @IsArray()
@@ -126,10 +105,4 @@ export class updateVendorDto{
     @IsString()
     open_hours : string;
 
-    // @ApiModelProperty()
-    // @IsString()
-    // account_type : string;
-
-    // @ApiModelProperty()
-    // created_by : number;
 }
