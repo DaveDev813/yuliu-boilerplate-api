@@ -14,27 +14,25 @@ import { vendorProviders } from 'src/vendors/vendors.provider';
 import { VendorsService } from 'src/vendors/vendors.service';
 
 @Module({
-    imports: [
-        DatabaseModule,
-        PassportModule.register({ defaultStrategy: 'bearer' })
-    ],
-    controllers : [ 
-        VendorUsersController
-    ],
-    providers : [
-        CommonQueries,
-        ...productProviders,
-        ProductsService,
-        ...userProviders,
-        UsersService,
-        ...vendorProviders,
-        VendorsService,
-        ...vendorUsersProviders,
-        VendorUsersService
-    ]
+  imports: [
+    DatabaseModule,
+    PassportModule.register({ defaultStrategy: 'bearer' }),
+  ],
+  controllers: [VendorUsersController],
+  providers: [
+    CommonQueries,
+    ...productProviders,
+    ProductsService,
+    ...userProviders,
+    UsersService,
+    ...vendorProviders,
+    VendorsService,
+    ...vendorUsersProviders,
+    VendorUsersService,
+  ],
 })
-export class VendorsModule implements NestModule{
-    configure(consumer : MiddlewareConsumer){
-        consumer.apply(JWTChecker).forRoutes('vendors')
-    }
+export class VendorUsersModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(JWTChecker).forRoutes('vendors');
+  }
 }
