@@ -1,69 +1,109 @@
-import { Controller, Post, Put, BadRequestException, Param } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Put,
+  BadRequestException,
+  Param,
+  Get,
+  Body,
+  Delete,
+} from '@nestjs/common';
 import { ApiUseTags } from '@nestjs/swagger';
 import { VendorsService } from './services/vendors.service';
 import { EmployeeService } from './services/employee.service';
 import { BranchesService } from './services/branches.service';
-import { newVendorEmployee, updateVendorEmployee } from './dto/employee.dto';
+import faker = require('faker');
+import { NewVendorEmployeeDto, UpdateVendorEmployee } from './dto/employee.dto';
+@ApiUseTags('Vendors Employee')
+@Controller('employee')
+export class EmployeeController {
+  constructor(
+    private readonly branchesService: BranchesService,
+    private readonly vendorService: VendorsService,
+    private readonly employeeService: EmployeeService,
+  ) {}
 
-@ApiUseTags(`Vendors Employee`)
-@Controller('vendor/employee')
-export class EmployeeController{
+  @Get()
+  async GetEmployees() {
+    return this.employeeService.getEmployees();
+  }
 
-    constructor(
-        private readonly BranchesService : BranchesService,
-        private readonly VendorService : VendorsService,
-        private readonly EmployeeService : EmployeeService){
+  @Get(':id')
+  async getEmployeeInfo(@Param('id') employeeId: number) {
+    const employee = await this.employeeService.getEmployeeById(employeeId);
+    const vendor = await this.vendorService.getVendorById(employee.vendorId);
+    const branch = await this.branchesService.getBranchById(employee.branchId);
+
+    if (!employee) {
+      throw new BadRequestException('Employee does not exists...');
     }
 
-    @Post(`:id`)
-    async getEmployeeInfo(@Param('id') employeeId : number){
-
-        const employee = await this.EmployeeService.getEmployeeById(employeeId);
-
-        if(!employee){
-            throw new BadRequestException('Employee does not exists...')
-        }
-
-        const vendor = await this.VendorService.getVendorById(employee.vendor_id);
-
-        if(!vendor){
-            throw new BadRequestException('Vendor of employee does not exists...');
-        }
-
-        const branch = await this.BranchesService.getBranchById(employee.branch_id);
-
-        if(!branch){
-            throw new BadRequestException('Branch of employee does not exists...');
-        }
-
-        return { branch : branch, employee : employee, vendor : vendor };
-    }
-    
-    @Post(`create/faker`)
-    async createFakeVendorEmployee(){
-
-    }
-    
-    @Post(`create`)
-    async createVendorEmployee( employee : newVendorEmployee){
-
-        const vendor = this.VendorService.getVendorById(employee.vendor_id);
-        const branch = this.BranchesService.getBranchById(employee.branch_id);
-
-        if(!vendor){
-            throw new BadRequestException('Vendor does not exists..');
-        }
-
-        if(!branch){
-            throw new BadRequestException('Branch does not exists..');
-        }
-
-        return await this.EmployeeService.createEmployee(employee);
+    if (!vendor) {
+      throw new BadRequestException('Vendor of employee does not exists...');
     }
 
-    @Put(`update/:id`)
-    async updateVendorEmployee(employeeId : number, revision : updateVendorEmployee){
-
-        return await this.EmployeeService.updateEmployee(employeeId, revision);
+    if (!branch) {
+      throw new BadRequestException('Branch of employee does not exists...');
     }
+
+    return { branch, employee, vendor };
+  }
+  @Post('create')
+  async createEmployee(@Body() employee: NewVendorEmployeeDto) {
+    const vendor = await this.vendorService.getVendorById(employee.vendorId);
+    const branch = await this.branchesService.getBranchById(employee.branchId);
+
+    if (!vendor) {
+      throw new BadRequestException('Vendor does not exists..');
+    }
+    if (!branch) {
+      throw new BadRequestException('Branch does not exists..');
+    }
+    return await this.employeeService.createEmployee(employee);
+  }
+
+  @Post('create/faker')
+  async createFakeVendorEmployee() {
+    const data = {
+      vendorId: faker.random.number(),
+      branchId: faker.random.number(),
+      businessAddressId: faker.random.number(),
+      employeeCode: faker.random.number(),
+      employeeName: faker.name.findName(),
+      mobileNo: faker.phone.phoneNumberFormat(),
+      position: faker.name.jobTitle(),
+      commissionToVendor: faker.random.number(),
+      overallRating: faker.random.number(),
+      isAvailable: faker.random.number(),
+      lastUpdated: faker.date.recent(),
+      lastUpdatedBy: faker.name.findName(),
+      createdBy: faker.name.findName(),
+      dateCreated: faker.date.recent(),
+    };
+    return await this.employeeService.createEmployee(data);
+  }
+
+  @Put('update/:id')
+  async updateVendorEmployee(
+    @Param('id') employeeId: number,
+    @Body() revision: UpdateVendorEmployee,
+  ) {
+    const employee = await this.employeeService.getEmployeeById(employeeId);
+
+    if (!employee) {
+      throw new BadRequestException('Employee Id not found.');
+    }
+
+    return await this.employeeService.updateEmployee(employeeId, revision);
+  }
+  @Delete('delete/:id')
+  async deleteVendorEmployee(@Param('id') employeeId: number) {
+    const employee = await this.employeeService.getEmployeeById(employeeId);
+
+    if (!employee) {
+      throw new BadRequestException('Employee Id not found.');
+    }
+
+    return await this.employeeService.deleteEmployee(employeeId);
+  }
 }

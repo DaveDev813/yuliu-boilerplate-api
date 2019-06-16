@@ -1,96 +1,114 @@
-import { ApiModelProperty } from "@nestjs/swagger";
-import { IsString, IsEmail, MaxLength, Length, IsOptional, IsArray, IsIn, ArrayUnique, IsMilitaryTime, IsPhoneNumber, ArrayMaxSize, ArrayMinSize, ValidateNested, IsNumber, IsPositive, IsBoolean } from "class-validator";
+import { ApiModelProperty } from '@nestjs/swagger';
+import {
+  IsString,
+  IsEmail,
+  MaxLength,
+  Length,
+  IsOptional,
+  IsArray,
+  IsIn,
+  ArrayUnique,
+  IsMilitaryTime,
+  IsPhoneNumber,
+  ArrayMaxSize,
+  ArrayMinSize,
+  ValidateNested,
+  IsNumber,
+  IsPositive,
+  IsBoolean,
+} from 'class-validator';
 
-export class newVendorEmployee{
+export class NewVendorEmployeeDto {
+  @ApiModelProperty()
+  @IsNumber()
+  vendorId: number;
 
-    @ApiModelProperty()
-    @IsNumber()
-    vendor_id : number;
+  @ApiModelProperty()
+  @IsNumber()
+  branchId: number;
 
-    @ApiModelProperty()
-    @IsNumber()
-    branch_id : number;
+  @ApiModelProperty()
+  @IsNumber()
+  businessAddressId: string;
 
-    @ApiModelProperty()
-    @IsOptional()
-    @IsString()
-    @Length(10, 100)
-    employee_code : string;
+  @ApiModelProperty()
+  @IsOptional()
+  @IsString()
+  @Length(10, 100)
+  employeeCode: string;
 
-    @ApiModelProperty()
-    @IsString()
-    @Length(10, 100)
-    employee_name : string;
+  @ApiModelProperty()
+  @IsString()
+  @Length(10, 100)
+  employeeName: string;
 
-    @ApiModelProperty()
-    @IsOptional()
-    @IsPhoneNumber('PH')
-    mobile_no : string;
+  @ApiModelProperty()
+  @IsOptional()
+  @IsPhoneNumber('PH')
+  mobileNo: string;
 
-    @ApiModelProperty()
-    @IsOptional()
-    @IsIn(["Therapist", "Barber", "Others"])
-    position : string;
+  @ApiModelProperty()
+  @IsOptional()
+  @IsIn(['Therapist', 'Barber', 'Others'])
+  position: string;
 
-    @ApiModelProperty()
-    @IsNumber()
-    comission_to_vendor : number;
+  @ApiModelProperty()
+  @IsNumber()
+  commissionToVendor: number;
 
-    @ApiModelProperty()
-    @IsOptional()
-    @IsNumber()
-    overall_rating : number;
+  @ApiModelProperty()
+  @IsOptional()
+  @IsNumber()
+  overallRating: number;
 
-    @ApiModelProperty()
-    @IsOptional()
-    @IsBoolean()
-    is_available : boolean;
-    
-    @ApiModelProperty()
-    @IsNumber()
-    created_By : number;
+  @ApiModelProperty()
+  @IsOptional()
+  @IsBoolean()
+  isAvailable: boolean;
+
+  @ApiModelProperty()
+  lastUpdated: string;
+
+  @ApiModelProperty()
+  lastUpdatedBy: string;
+
+  @ApiModelProperty()
+  createdBy: string;
+
+  @ApiModelProperty()
+  dateCreated: string;
 }
 
-export class updateVendorEmployee{
+// tslint:disable-next-line:max-classes-per-file
+export class UpdateVendorEmployee {
+  @ApiModelProperty()
+  @IsOptional()
+  @IsString()
+  @Length(10, 100)
+  employeeName: string;
 
-    @ApiModelProperty()
-    @IsOptional()
-    @IsString()
-    @Length(10, 100)
-    employee_code : string;
+  @ApiModelProperty()
+  @IsOptional()
+  @IsPhoneNumber('PH')
+  mobileNo: string;
 
-    @ApiModelProperty()
-    @IsOptional()
-    @IsString()
-    @Length(10, 100)
-    employee_name : string;
+  @ApiModelProperty()
+  @IsOptional()
+  @IsIn(['Therapist', 'Barber', 'Others'])
+  position: string;
 
-    @ApiModelProperty()
-    @IsOptional()
-    @IsPhoneNumber('PH')
-    mobile_no : string;
+  @ApiModelProperty()
+  @IsOptional()
+  @IsNumber()
+  commissionToVendor: number;
 
-    @ApiModelProperty()
-    @IsOptional()
-    @IsIn(["Therapist", "Barber", "Others"])
-    position : string;
+  @ApiModelProperty()
+  @IsOptional()
+  @IsNumber()
+  overallRating: number;
 
-    @ApiModelProperty()
-    @IsOptional()
-    @IsNumber()
-    comission_to_vendor : number;
-
-    @ApiModelProperty()
-    @IsOptional()
-    @IsNumber()
-    overall_rating : number;
-
-    @ApiModelProperty()
-    @IsOptional()
-    @IsBoolean()
-    is_available : boolean;
-    
-    @ApiModelProperty()
-    @IsNumber()
-    updated_by : number;
+  @ApiModelProperty()
+  @IsOptional()
+  @IsBoolean()
+  isAvailable: boolean;
 }
