@@ -1,52 +1,58 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Clients } from './clients.entity';
-import { newClientDto, updateClientDto } from './dto/client.dto';
+import { NewClientDto, UpdateClientDto } from './dto/client.dto';
 import { searchDto, primaryIdDto } from 'src/_commons/commons.dto';
 import { CommonQueries } from 'src/_commons/commons.orm';
 
 @Injectable()
-export class ClientsService{
+export class ClientsService {
+  private searchColumns = [
+    'firstname',
+    'middlename',
+    'lastname',
+    'email',
+    'contact_no',
+  ];
 
-    private searchColumns = ["firstname", "middlename", "lastname", "email", "contact_no"];
+  constructor(
+    private readonly commons: CommonQueries,
+    @Inject('CLIENT_REPOSITORY')
+    private readonly clientRespository: Repository<Clients>,
+  ) {
+    this.commons.query(this.clientRespository);
+  }
 
-    constructor(
-        private readonly commons : CommonQueries,
-        @Inject('CLIENT_REPOSITORY') private readonly clientRespository : Repository<Clients>){
+  async getClientInfoById(identity: number) {
+    return await this.clientRespository.findOne(identity);
+  }
 
-        this.commons.query(this.clientRespository);
-    }
+  async getClients(options: searchDto) {
+    const result = await this.commons.read(
+      Number(options.limit),
+      Number(options.offset),
+      options.keyword,
+      this.searchColumns,
+    );
 
-    async getClientInfoById(identity : primaryIdDto ){
-        
-        return await this.clientRespository.findOne(identity.id);
-    }
+    return result;
+  }
 
-    async getClients(options : searchDto){
-                
-        const result = await this.commons.read(Number(options.limit), Number(options.offset), options.keyword, this.searchColumns);
+  async createClient(client: NewClientDto) {
+    const result = await this.commons.insert(client);
 
-        return result;
-    }
+    return result;
+  }
 
-    async createClient(client : newClientDto){
+  async updateClient(id: string, revisions: UpdateClientDto) {
+    const result = await this.commons.update(Number(id), revisions);
 
-        const result = await this.commons.create(client);
+    return result;
+  }
 
-        return result;
-    }
+  async deleteClient(id: string) {
+    const result = await this.commons.delete(Number(id));
 
-    async updateClient(id : string, revisions : updateClientDto){
-
-        const result = await this.commons.update(Number(id), revisions);
-
-        return result;
-    }
-
-    async deleteClient(id : string){
-
-        const result = await this.commons.delete(Number(id));
-
-        return result;
-    }
+    return result;
+  }
 }
