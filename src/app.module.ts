@@ -1,4 +1,9 @@
-import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
+import {
+  Module,
+  NestModule,
+  MiddlewareConsumer,
+  RequestMethod,
+} from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { HttpStrategy } from './http.strategy';
 import { ClientsModule } from './clients/clients.module';
@@ -16,7 +21,7 @@ import { CommonQueries } from './_commons/commons.orm';
     ClientsModule,
     ConfigModule,
     UsersModule,
-    VendorsModule
+    VendorsModule,
   ],
   providers: [
     CommonQueries,
@@ -25,8 +30,8 @@ import { CommonQueries } from './_commons/commons.orm';
     HttpStrategy,
   ],
 })
-export class AppModule implements NestModule{
-  configure(consumer: MiddlewareConsumer){
-    consumer.apply(Logger).forRoutes({ path : "*", method : RequestMethod.ALL });
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(Logger).forRoutes({ path: '*', method: RequestMethod.ALL });
   }
 }
