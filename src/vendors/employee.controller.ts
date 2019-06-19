@@ -14,6 +14,7 @@ import { EmployeeService } from './services/employee.service';
 import { BranchesService } from './services/branches.service';
 import faker = require('faker');
 import { NewVendorEmployeeDto, UpdateVendorEmployee } from './dto/employee.dto';
+import { searchDto } from '../_commons/commons.dto';
 @ApiUseTags('Vendors Employee')
 @Controller('employee')
 export class EmployeeController {
@@ -24,8 +25,8 @@ export class EmployeeController {
   ) {}
 
   @Get()
-  async GetEmployees() {
-    return this.employeeService.getEmployees();
+  async GetEmployees(@Body() options: searchDto) {
+    return this.employeeService.getEmployees(options);
   }
 
   @Get(':id')

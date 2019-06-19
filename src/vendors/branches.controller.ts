@@ -20,14 +20,19 @@ import _ = require('lodash');
 import { AuthGuard } from '@nestjs/passport';
 
 @ApiUseTags('Vendors Branches')
-@ApiBearerAuth()
-@UseGuards(AuthGuard())
+// @ApiBearerAuth()
+// @UseGuards(AuthGuard())
 @Controller('vendor/branches')
 export class BranchesController {
   constructor(
     private readonly vendorService: VendorsService,
     private readonly branchesService: BranchesService,
   ) {}
+
+  @Post()
+  async getBranches(@Body() options: searchDto) {
+    return await this.branchesService.getBranches(options);
+  }
 
   @Get(':id')
   async getBranchInfo(@Param('id') branchId: number) {
@@ -39,15 +44,18 @@ export class BranchesController {
     return await this.branchesService.getBranchById(branchId);
   }
 
-  @Post('create')
-  async createBranch(@Body() branch: NewVendorBranchDto) {
+  @Post('create/:vendorId')
+  async createBranch(
+    @Param('vendorId') vendorId,
+    @Body() branch: NewVendorBranchDto,
+  ) {
     const vendor = await this.vendorService.getVendorById(branch.vendorId);
 
     if (!vendor) {
       throw new BadRequestException('Invalid Vendor ID..');
     }
 
-    if (vendor.vendor_status === `Disabled`) {
+    if (vendor.vendorStatus === `Disabled`) {
       throw new BadRequestException('Vendor is not active..');
     }
 
@@ -93,7 +101,7 @@ export class BranchesController {
       throw new BadRequestException('Invalid Vendor ID..');
     }
 
-    if (vendor.vendor_status === 'Disabled') {
+    if (vendor.vendorStatus === 'Disabled') {
       throw new BadRequestException('Vendor is not active..');
     }
 
