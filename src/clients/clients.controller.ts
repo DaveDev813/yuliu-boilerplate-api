@@ -1,7 +1,7 @@
 import { Controller, Param, Post, UseGuards, Body, Put } from '@nestjs/common';
 import { ApiBearerAuth, ApiUseTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
-import { ClientsService } from './clients.service';
+import { ClientsService } from './services/clients.service';
 import { newClientDto, updateClientDto } from './dto/client.dto';
 import { searchDto, primaryIdDto } from 'src/_commons/commons.dto';
 

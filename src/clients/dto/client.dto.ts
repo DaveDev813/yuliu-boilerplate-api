@@ -31,28 +31,32 @@ export class newClientDto{
     @ApiModelProperty()
     @IsNotEmpty()
     @IsString()
-    @Optional()
-    telephone_no ?: string;
-
-    @ApiModelProperty()
-    @IsNotEmpty()
-    @IsString()
     mobile_no : string;
-    
-    @ApiModelProperty()
-    @IsNotEmpty()
-    @IsString()
-    address : string;
 
     @ApiModelProperty()
-    @IsNotEmpty()
     @IsString()
-    zip_code : string;    
+    last_transaction_date: string;
 
     @ApiModelProperty()
-    @IsNotEmpty()
     @IsString()
-    city : string;
+    last_date_updated: string;
+
+    @ApiModelProperty()
+    @IsString()
+    date_created: string;
+
+    @ApiModelProperty()
+    @IsString()
+    birthday: string;
+
+    @ApiModelProperty()
+    @IsString()
+    gender: string;
+
+    @ApiModelProperty()
+    @IsString()
+    isVerified: number;
+
 }
 
 export class updateClientDto{

@@ -1,4 +1,9 @@
-import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
+import {
+  Module,
+  NestModule,
+  MiddlewareConsumer,
+  RequestMethod,
+} from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { HttpStrategy } from './http.strategy';
 import { ClientsModule } from './clients/clients.module';
@@ -9,7 +14,6 @@ import { userProviders } from './users/users.providers';
 import { VendorsModule } from './vendors/vendors.module';
 import { Logger } from './app.middleware';
 import { CommonQueries } from './_commons/commons.orm';
-import { EmployeeController } from './vendors/employee.controller';
 import { EmployeeService } from './vendors/services/employee.service';
 
 @Module({
@@ -18,19 +22,20 @@ import { EmployeeService } from './vendors/services/employee.service';
     ClientsModule,
     ConfigModule,
     UsersModule,
-    VendorsModule
+    VendorsModule,
   ],
   providers: [
     CommonQueries,
     ...userProviders,
     UsersService,
     HttpStrategy,
-    EmployeeService
+    EmployeeService,
+    // VendorServiceService,
   ],
-  controllers: [EmployeeController]
+  controllers: [],
 })
-export class AppModule implements NestModule{
-  configure(consumer: MiddlewareConsumer){
-    consumer.apply(Logger).forRoutes({ path : "*", method : RequestMethod.ALL });
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(Logger).forRoutes({ path: '*', method: RequestMethod.ALL });
   }
 }
