@@ -29,10 +29,15 @@ import { EmployeeService } from './vendors/services/employee.service';
     ...userProviders,
     UsersService,
     HttpStrategy,
+<<<<<<< HEAD
     EmployeeService,
     // VendorServiceService,
   ],
   controllers: [],
+=======
+    VendorServiceService,
+  ]
+>>>>>>> 7eda320dbc7a67787b9834b61a1e7d1704b605c8
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
