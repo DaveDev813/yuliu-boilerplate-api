@@ -28,31 +28,18 @@ export class ClientsService {
   }
 
   async getClients(options: searchDto) {
-    const result = await this.commons.read(
-      Number(options.limit),
-      Number(options.offset),
-      options.keyword,
-      this.searchColumns,
-    );
-
-    return result;
+    return await this.commons.read(options, this.searchColumns);
   }
 
   async createClient(client: NewClientDto) {
-    const result = await this.commons.insert(client);
-
-    return result;
+    return await this.commons.insert(client);
   }
 
-  async updateClient(id: string, revisions: UpdateClientDto) {
-    const result = await this.commons.update(Number(id), revisions);
-
-    return result;
+  async updateClient(id: number, revisions: UpdateClientDto) {
+    return await this.commons.update(Number(id), revisions);
   }
 
   async deleteClient(id: string) {
-    const result = await this.commons.delete(Number(id));
-
-    return result;
+    return await this.commons.delete(Number(id));
   }
 }

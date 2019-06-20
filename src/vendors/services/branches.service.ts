@@ -55,7 +55,7 @@ export class BranchesService {
 
     const result = await this.common
       .query(this.vendorBranchRepository)
-      .read(options.limit, options.offset, options.keyword, search_columns);
+      .read(options, search_columns);
 
     return result;
   }

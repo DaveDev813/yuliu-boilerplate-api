@@ -23,11 +23,7 @@ export class EmployeeService {
   }
 
   async getEmployees(options: searchDto) {
-    return await this.common.read(
-      options.offset,
-      options.limit,
-      options.keyword,
-    );
+    return await this.common.read(options);
   }
 
   async createEmployee(employee: NewVendorEmployeeDto) {

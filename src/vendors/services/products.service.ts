@@ -6,13 +6,14 @@ import {
   VendorBranches,
   Vendors,
 } from '../entities/vendors.entity';
-import { newVendorProduct, updateVendorProductDto } from '../dto/products';
+import { NewVendorProduct, UpdateVendorProductDto } from '../dto/products.dto';
 import voucherCodeGenerator = require('voucher-code-generator');
 import moment = require('moment');
 import { searchDto } from 'src/_commons/commons.dto';
 
 @Injectable()
 export class ProductsService {
+  // tslint:disable-next-line:variable-name
   private search_columns = [
     'product_code',
     'name',
@@ -28,7 +29,9 @@ export class ProductsService {
     private readonly PRODUCT_REPOSITORY: Repository<VendorProducts>,
     @Inject('VENDOR_BRANCH_REPOSITORY')
     private readonly BRANCHES_REPOSITORY: Repository<VendorBranches>,
-  ) {}
+  ) {
+    this.common.query(this.PRODUCT_REPOSITORY);
+  }
 
   async getProductsByVendorId(vendorId: number, options: searchDto) {
     const query = this.PRODUCT_REPOSITORY.createQueryBuilder().select();
@@ -60,9 +63,7 @@ export class ProductsService {
   }
 
   async getProducts(options: searchDto) {
-    return await this.common
-      .query(this.PRODUCT_REPOSITORY)
-      .read(options.limit, options.offset, options.keyword);
+    return await this.common.query(this.PRODUCT_REPOSITORY).read(options);
     // let query = this.PRODUCT_REPOSITORY
     // .createQueryBuilder(`products`)
     // if(options.keyword){
@@ -90,44 +91,45 @@ export class ProductsService {
 
   async updateVendorProduct(
     productId: number,
-    revisions: updateVendorProductDto,
+    revisions: UpdateVendorProductDto,
   ) {
-    const _revisions: any = revisions;
+    const changes: any = revisions;
 
-    _revisions.updated_by = 1;
-    _revisions.last_date_updated = '2020-01-01';
+    // changes.updated_by = 1;
+    // changes.last_date_updated = '2020-01-01';
 
     // tslint:disable-next-line:variable-name
-    const _result = await this.PRODUCT_REPOSITORY.update(productId, _revisions);
+    const _result = await this.common
+      .query(this.PRODUCT_REPOSITORY)
+      .update(productId, changes);
 
-    // _result.payload = _revisions;
+    // _result.payload = changes;
 
     return _result;
   }
 
-  async createVendorProduct(product: newVendorProduct) {
+  async createVendorProduct(product: NewVendorProduct) {
     // tslint:disable-next-line:variable-name
-    const created_by = 1;
-    const _product = {
-      branch_id: product.branch_id,
+    const newProduct = {
+      branchId: product.branchId,
       name: product.name,
-      product_code: voucherCodeGenerator.generate({
+      productCode: voucherCodeGenerator.generate({
         length: 5,
         count: 1,
         pattern: `#####`,
         prefix: `VENDOR-`,
       })[0],
       description: product.description ? product.description : null,
-      product_type: product.product_type,
+      productType: product.productType,
       duration: product.duration ? product.duration : null,
-      product_cost: product.product_cost,
-      product_price: product.product_price,
-      product_comission: product.product_comission,
-      created_by,
+      productCost: product.productCost,
+      productPrice: product.productPrice,
+      productComission: product.productComission,
+      createdBy: 1,
     };
 
     // tslint:disable-next-line:variable-name
-    const _result = await this.PRODUCT_REPOSITORY.insert(_product);
+    const _result = await this.PRODUCT_REPOSITORY.insert(newProduct);
 
     // _result.payload = _product;
 

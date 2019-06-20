@@ -20,9 +20,9 @@ import _ = require('lodash');
 import { AuthGuard } from '@nestjs/passport';
 
 @ApiUseTags('Vendors Branches')
-// @ApiBearerAuth()
-// @UseGuards(AuthGuard())
-@Controller('vendor/branches')
+@ApiBearerAuth()
+@UseGuards(AuthGuard())
+@Controller('branches')
 export class BranchesController {
   constructor(
     private readonly vendorService: VendorsService,
@@ -44,7 +44,7 @@ export class BranchesController {
     return await this.branchesService.getBranchById(branchId);
   }
 
-  @Post('create/:vendorId')
+  @Post('create')
   async createBranch(
     @Param('vendorId') vendorId,
     @Body() branch: NewVendorBranchDto,
@@ -52,16 +52,22 @@ export class BranchesController {
     const vendor = await this.vendorService.getVendorById(branch.vendorId);
 
     if (!vendor) {
-      throw new BadRequestException('Invalid Vendor ID..');
+      return {
+        error: { description: 'Invalid Vendor Id' },
+      };
     }
 
     if (vendor.vendorStatus === `Disabled`) {
-      throw new BadRequestException('Vendor is not active..');
+      return {
+        error: { description: 'Vendor is not Active' },
+      };
     }
 
-    return await this.branchesService.createBranch(branch);
+    const newBranch = await this.branchesService.createBranch(branch);
 
-    // return { payload: result.generatedMaps, raw: result.raw };
+    return {
+      data: { branchId: newBranch.raw.insertId },
+    };
   }
 
   @Post('create/faker')
@@ -98,15 +104,19 @@ export class BranchesController {
     const vendor = await this.vendorService.getVendorById(revisions.vendorId);
 
     if (!vendor) {
-      throw new BadRequestException('Invalid Vendor ID..');
+      return {
+        error: { description: 'Invalid Vendor Id' },
+      };
     }
 
     if (vendor.vendorStatus === 'Disabled') {
-      throw new BadRequestException('Vendor is not active..');
+      return {
+        error: { description: 'Vendor is not active' },
+      };
     }
 
-    return await this.branchesService.updateVendorBranch(branchId, revisions);
+    await this.branchesService.updateVendorBranch(branchId, revisions);
 
-    // return { payload: vendor.generatedMaps, raw: vendor.raw };
+    return await this.branchesService.getBranchById(branchId);
   }
 }

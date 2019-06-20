@@ -130,19 +130,20 @@ export class VendorBranches {
   dateCreated: string;
 }
 
+// tslint:disable-next-line:max-classes-per-file
 @Entity()
 export class VendorProducts {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ type: 'integer', nullable: false })
-  vendor_id: number;
+  vendorId: number;
 
   @Column({ type: 'integer', nullable: false })
-  branch_id: number;
+  branchId: number;
 
   @Column({ type: 'varchar', nullable: false, unique: true })
-  product_code: string;
+  productCode: string;
 
   @Column({ type: 'varchar', nullable: false })
   name: string;
@@ -151,34 +152,34 @@ export class VendorProducts {
   description: string;
 
   @Column({ type: 'varchar', nullable: true, default: () => '\'Service\'' })
-  product_type: string;
+  productType: string;
 
   @Column({ type: 'varchar', nullable: true, default: () => '\'N/A\'' })
   duration: string;
 
   @Column({ type: 'double precision', nullable: false, default: () => 0.0 })
-  product_cost: number;
+  productCost: number;
 
   @Column({ type: 'double precision', nullable: false, default: () => 0.0 })
-  product_price: number;
+  productPrice: number;
 
   @Column({ type: 'double precision', nullable: false, default: () => 0.0 })
-  product_comission: number;
+  productComission: number;
 
   @Column({ type: 'double precision', nullable: true, default: () => 0.0 })
   rating: number;
 
   @Column({ type: 'integer', nullable: true })
-  updated_by: number;
+  updatedBy: number;
 
   @Column({ type: 'datetime', nullable: true })
-  last_date_updated: string;
+  lastDateUpdated: string;
 
   @Column({ type: 'integer', nullable: false })
-  created_by: number;
+  createdBy: number;
 
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
-  date_created: string;
+  dateCreated: string;
 }
 
 // tslint:disable-next-line:max-classes-per-file

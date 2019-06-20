@@ -56,8 +56,8 @@ export class NewVendorDto {
 
   @ApiModelProperty()
   @IsOptional()
-  @IsPhoneNumber(`PH`)
-  @Length(7, 7)
+  // @IsPhoneNumber(`PH`)
+  // @Length(7, 7)
   telephoneNo: string;
 
   @ApiModelProperty()

@@ -13,7 +13,7 @@ export class searchDto {
   @ApiModelProperty()
   @IsString()
   @IsOptional()
-  keyword: string = '';
+  keyword?: string = '';
 
   @ApiModelProperty()
   @IsNumber()

@@ -6,6 +6,7 @@ import {
   Body,
   Put,
   Get,
+  BadRequestException,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiUseTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -20,26 +21,48 @@ import { searchDto, primaryIdDto } from 'src/_commons/commons.dto';
 export class ClientsController {
   constructor(private readonly clientService: ClientsService) {}
 
-  @Get()
+  @Post()
   async getClients(@Body() options: searchDto) {
     return await this.clientService.getClients(options);
   }
 
   @Get(':id')
   async getClientInfo(@Param('id') identity: number) {
-    return await this.clientService.getClientInfoById(identity);
+    const client = this.clientService.getClientInfoById(identity);
+
+    if (!client) {
+      return {
+        error: { description: 'No Client Found' },
+      };
+    }
+
+    return client;
   }
 
   @Post('create')
   async createClient(@Body() client: NewClientDto) {
-    return await this.clientService.createClient(client);
+    const newClient = await this.clientService.createClient(client);
+
+    return {
+      data: { clientId: newClient.raw.insertId },
+    };
   }
 
   @Put('update/:id')
   async updateClient(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() revisions: UpdateClientDto,
   ) {
-    return await this.clientService.updateClient(id, revisions);
+    const client = this.clientService.getClientInfoById(id);
+
+    if (!client) {
+      return {
+        error: { description: 'No Client Found' },
+      };
+    }
+
+    await this.clientService.updateClient(id, revisions);
+
+    return await this.clientService.getClientInfoById(id);
   }
 }

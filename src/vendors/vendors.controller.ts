@@ -22,8 +22,8 @@ import _ = require('lodash');
 import { EmployeeService } from './services/employee.service';
 
 @ApiUseTags(`Vendors`)
-// @UseGuards(AuthGuard())
-// @ApiBearerAuth()
+@UseGuards(AuthGuard())
+@ApiBearerAuth()
 @Controller(`vendors`)
 export class VendorsController {
   constructor(
@@ -43,7 +43,9 @@ export class VendorsController {
     const vendor = await this.vendorService.getVendorById(vendorId);
 
     if (!vendor) {
-      throw new BadRequestException('No Vendor Found');
+      return {
+        error: { description: 'No Vendor Found' },
+      };
     }
 
     return vendor;
@@ -70,7 +72,7 @@ export class VendorsController {
     };
   }
 
-  @Post(':vendorId/employee/:employeeId')
+  @Get(':vendorId/employee/:employeeId')
   async getVendorEmployee(
     @Param('vendorId') vendorId: number,
     @Param('employeeId') employeeId: number,
@@ -80,24 +82,16 @@ export class VendorsController {
 
     if (!vendor) {
       return {
-        error: {
-          description: 'No Vendor Found',
-        },
+        error: { description: 'No Vendor Found' },
       };
     }
     if (!employee) {
       return {
-        error: {
-          description: 'No Employee Found',
-        },
+        error: { description: 'No Employee Found' },
       };
     }
 
-    return {
-      data: {
-        employee,
-      },
-    };
+    return employee;
   }
 
   @Post(':id/branches')
@@ -109,9 +103,7 @@ export class VendorsController {
 
     if (!vendor) {
       return {
-        error: {
-          description: 'Vendor not found',
-        },
+        error: { description: 'Vendor not found' },
       };
     }
     const branches = await this.branchesService.getBranches(options);
@@ -130,9 +122,7 @@ export class VendorsController {
 
     if (!vendor) {
       return {
-        error: {
-          description: 'No Vendor found',
-        },
+        error: { description: 'No Vendor found' },
       };
     }
     const products = await this.productService.getProducts(options);
@@ -144,9 +134,12 @@ export class VendorsController {
 
   @Post(`create`)
   async createVendor(@Body() vendor: NewVendorDto) {
-    const vendorData = await this.vendorService.createVendor(vendor);
+    const newVendor = await this.vendorService.createVendor(vendor);
 
-    return { payload: vendorData.generatedMaps, raw: vendorData.raw };
+    return {
+      data: { vendorId: newVendor.raw.insertId },
+    };
+    // return { payload: vendorData.generatedMaps, raw: vendorData.raw };
   }
 
   @Put('update/:id')
@@ -158,16 +151,12 @@ export class VendorsController {
 
     if (!vendor) {
       return {
-        error: {
-          description: 'No vendor found',
-        },
+        error: { description: 'No vendor found' },
       };
     }
-    const changes = await this.vendorService.updateVendor(vendorId, revisions);
+    await this.vendorService.updateVendor(vendorId, revisions);
 
-    return {
-      data: changes,
-    };
+    return await this.vendorService.getVendorById(vendorId);
   }
 
   @Post('create/faker')

@@ -28,6 +28,6 @@ export class ClientsModule implements NestModule {
    * Apply middlewares for this module
    */
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(JWTChecker).forRoutes('clients');
+    // consumer.apply(JWTChecker).forRoutes('clients');
   }
 }
