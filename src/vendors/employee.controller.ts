@@ -28,6 +28,7 @@ export class EmployeeController {
     private readonly employeeService: EmployeeService,
   ) {}
 
+
   @Post()
   async GetEmployees(@Body() options: searchDto) {
     return this.employeeService.getEmployees(options);
