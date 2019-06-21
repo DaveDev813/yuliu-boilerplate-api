@@ -20,32 +20,26 @@ export class Clients {
   @Column({ type: 'text', nullable: false })
   gender: string;
 
-  @Column({ type: 'text', nullable: false })
-  zipCode: string;
-
-  @Column({ type: 'text', nullable: false })
-  city: string;
-
   @Column({ type: 'varchar', nullable: false, unique: false })
   email: string;
 
   @Column({ type: 'varchar', nullable: false })
-  mobileNo: string;
+  mobile_no: string;
 
   @Column({ type: 'boolean', nullable: false, default: () => false })
-  isVerified: string;
+  is_verified: string;
 
   @Column({ type: 'text', nullable: false })
-  verificationToken: string;
+  verification_token: string;
 
   @Column({ type: 'datetime', nullable: true })
-  lastTransactionDate: string;
+  last_transaction_date: string;
 
   @Column({ type: 'datetime' })
-  lastDateUpdated: string;
+  last_date_updated: string;
 
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
-  dateCreated: string;
+  date_created: string;
 }
 
 @Entity()
@@ -76,10 +70,10 @@ export class Client_Address_Book {
   province: string;
 
   @Column({ type: 'datetime', nullable: true })
-  last_transaction_date: string;
+  lastTransactionDate: string;
 
   @Column({ type: 'datetime' })
-  lastTransactionDate: string;
+  lastDateUpdated: string;
 
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   dateCreated: string;
