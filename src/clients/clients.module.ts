@@ -10,28 +10,24 @@ import { JWTChecker, Logger } from 'src/app.middleware';
 import { CommonQueries } from 'src/_commons/commons.orm';
 
 @Module({
-    imports: [
-        DatabaseModule,
-        PassportModule.register({ defaultStrategy: 'bearer' })
-    ],
-    controllers : [ 
-        ClientsController 
-    ],
-    providers : [ 
-        CommonQueries,
-        ...clientProviders, 
-        ClientsService, 
-        ...userProviders,
-        UsersService
-    ]
+  imports: [
+    DatabaseModule,
+    PassportModule.register({ defaultStrategy: 'bearer' }),
+  ],
+  controllers: [ClientsController],
+  providers: [
+    CommonQueries,
+    ...clientProviders,
+    ClientsService,
+    ...userProviders,
+    UsersService,
+  ],
 })
-export class ClientsModule implements NestModule{
-
-    /**
-     * Apply middlewares for this module
-     */
-    configure(consumer : MiddlewareConsumer){
-
-        consumer.apply(JWTChecker).forRoutes('clients');
-    }
+export class ClientsModule implements NestModule {
+  /**
+   * Apply middlewares for this module
+   */
+  configure(consumer: MiddlewareConsumer) {
+    // consumer.apply(JWTChecker).forRoutes('clients');
+  }
 }

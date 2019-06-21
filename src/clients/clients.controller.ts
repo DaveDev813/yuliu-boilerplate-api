@@ -1,39 +1,68 @@
-import { Controller, Param, Post, UseGuards, Body, Put } from '@nestjs/common';
+import {
+  Controller,
+  Param,
+  Post,
+  UseGuards,
+  Body,
+  Put,
+  Get,
+  BadRequestException,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiUseTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { ClientsService } from './clients.service';
-import { newClientDto, updateClientDto } from './dto/client.dto';
+import { NewClientDto, UpdateClientDto } from './dto/client.dto';
 import { searchDto, primaryIdDto } from 'src/_commons/commons.dto';
 
 @ApiUseTags('Client')
 @ApiBearerAuth()
 @UseGuards(AuthGuard())
 @Controller('clients')
-export class ClientsController{
+export class ClientsController {
+  constructor(private readonly clientService: ClientsService) {}
 
-    constructor(private readonly clientService : ClientsService){}
+  @Post()
+  async getClients(@Body() options: searchDto) {
+    return await this.clientService.getClients(options);
+  }
 
-    @Post()
-    async getClients(@Body() options : searchDto){
+  @Get(':id')
+  async getClientInfo(@Param('id') identity: number) {
+    const client = this.clientService.getClientInfoById(identity);
 
-        return await this.clientService.getClients(options);
+    if (!client) {
+      return {
+        error: { description: 'No Client Found' },
+      };
     }
 
-    @Post(':id')
-    async getClientInfo(@Body('id') identity : primaryIdDto){
+    return client;
+  }
 
-        return await this.clientService.getClientInfoById(identity);
+  @Post('create')
+  async createClient(@Body() client: NewClientDto) {
+    const newClient = await this.clientService.createClient(client);
+
+    return {
+      data: { clientId: newClient.raw.insertId },
+    };
+  }
+
+  @Put('update/:id')
+  async updateClient(
+    @Param('id') id: number,
+    @Body() revisions: UpdateClientDto,
+  ) {
+    const client = this.clientService.getClientInfoById(id);
+
+    if (!client) {
+      return {
+        error: { description: 'No Client Found' },
+      };
     }
 
-    @Post('create')
-    async createClient(@Body() client : newClientDto){
+    await this.clientService.updateClient(id, revisions);
 
-        return await this.clientService.createClient(client);
-    }
-
-    @Put('update/:id')
-    async updateClient(@Param('id') id : string, @Body() revisions : updateClientDto){
-
-        return await this.clientService.updateClient(id, revisions);
-    }
+    return await this.clientService.getClientInfoById(id);
+  }
 }

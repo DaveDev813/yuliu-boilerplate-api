@@ -7,14 +7,19 @@ import {
   Get,
   Body,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiUseTags } from '@nestjs/swagger';
+import { ApiUseTags, ApiBearerAuth } from '@nestjs/swagger';
 import { VendorsService } from './services/vendors.service';
 import { EmployeeService } from './services/employee.service';
 import { BranchesService } from './services/branches.service';
 import faker = require('faker');
 import { NewVendorEmployeeDto, UpdateVendorEmployee } from './dto/employee.dto';
+import { searchDto } from '../_commons/commons.dto';
+import { AuthGuard } from '@nestjs/passport';
 @ApiUseTags('Vendors Employee')
+@ApiBearerAuth()
+@UseGuards(AuthGuard())
 @Controller('employee')
 export class EmployeeController {
   constructor(
@@ -23,9 +28,10 @@ export class EmployeeController {
     private readonly employeeService: EmployeeService,
   ) {}
 
-  @Get()
-  async GetEmployees() {
-    return this.employeeService.getEmployees();
+
+  @Post()
+  async GetEmployees(@Body() options: searchDto) {
+    return this.employeeService.getEmployees(options);
   }
 
   @Get(':id')
@@ -35,18 +41,24 @@ export class EmployeeController {
     const branch = await this.branchesService.getBranchById(employee.branchId);
 
     if (!employee) {
-      throw new BadRequestException('Employee does not exists...');
+      return {
+        error: { description: 'Employee Not Found' },
+      };
     }
 
     if (!vendor) {
-      throw new BadRequestException('Vendor of employee does not exists...');
+      return {
+        error: { description: 'Vendor Not Found' },
+      };
     }
 
     if (!branch) {
-      throw new BadRequestException('Branch of employee does not exists...');
+      return {
+        error: { description: 'Branch Not Found' },
+      };
     }
 
-    return { branch, employee, vendor };
+    return employee;
   }
   @Post('create')
   async createEmployee(@Body() employee: NewVendorEmployeeDto) {
@@ -54,12 +66,22 @@ export class EmployeeController {
     const branch = await this.branchesService.getBranchById(employee.branchId);
 
     if (!vendor) {
-      throw new BadRequestException('Vendor does not exists..');
+      return {
+        error: { description: 'Vendor Not Found' },
+      };
     }
+
     if (!branch) {
-      throw new BadRequestException('Branch does not exists..');
+      return {
+        error: { description: 'Branch Not Found' },
+      };
     }
-    return await this.employeeService.createEmployee(employee);
+
+    const newEmployee = await this.employeeService.createEmployee(employee);
+
+    return {
+      data: { employeeId: newEmployee.raw.insertId },
+    };
   }
 
   @Post('create/faker')
@@ -94,14 +116,18 @@ export class EmployeeController {
       throw new BadRequestException('Employee Id not found.');
     }
 
-    return await this.employeeService.updateEmployee(employeeId, revision);
+    await this.employeeService.updateEmployee(employeeId, revision);
+
+    return await this.employeeService.getEmployeeById(employeeId);
   }
   @Delete('delete/:id')
   async deleteVendorEmployee(@Param('id') employeeId: number) {
     const employee = await this.employeeService.getEmployeeById(employeeId);
 
     if (!employee) {
-      throw new BadRequestException('Employee Id not found.');
+      return {
+        error: { description: 'No Employee Found' },
+      };
     }
 
     return await this.employeeService.deleteEmployee(employeeId);

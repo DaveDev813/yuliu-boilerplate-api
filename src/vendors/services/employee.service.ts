@@ -22,8 +22,8 @@ export class EmployeeService {
     this.common.query(this.VENDOR_EMPLOYEE_REPOSITORY);
   }
 
-  async getEmployees() {
-    return await this.common.read(0, 1, '');
+  async getEmployees(options: searchDto) {
+    return await this.common.read(options);
   }
 
   async createEmployee(employee: NewVendorEmployeeDto) {

@@ -2,40 +2,14 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Vendors {
-  @PrimaryGeneratedColumn(`increment`)
+  @PrimaryGeneratedColumn()
   id: number;
-
-  @Column({ type: 'varchar', nullable: false, unique: true })
-  code: string;
 
   @Column({ type: 'varchar', nullable: false })
   name: string;
 
-  @Column({ type: 'longtext', nullable: true })
-  description: string;
-
-  @Column({ type: 'varchar', nullable: false })
-  email: string;
-
   @Column({ type: 'varchar', nullable: true, default: () => '\'N/A\'' })
-  mobile_no: string;
-
-  @Column({ type: 'varchar', nullable: true, default: () => '\'N/A\'' })
-  telephone_no: string;
-
-  /** e.g Mon,Tues,Thurs,Fri,Sat */
-  @Column({ type: 'varchar', nullable: false })
-  days_open: string;
-
-  /** e.g Mon,Tues,Thurs,Fri,Sat */
-  @Column({ type: 'varchar', nullable: false })
-  days_closed: string;
-
-  @Column({ type: 'time', nullable: false })
-  open_hours: string;
-
-  @Column({ type: 'time', nullable: false })
-  closed_hours: string;
+  mobileNo: string;
 
   @Column({ type: 'longtext', nullable: false })
   address: string;
@@ -43,32 +17,58 @@ export class Vendors {
   @Column({ type: 'varchar', nullable: false })
   city: string;
 
+  @Column({ type: 'longtext', nullable: true })
+  description: string;
+
+  @Column({ type: 'varchar', nullable: true, default: () => '\'N/A\'' })
+  telephoneNo: string;
+
+  /** e.g Mon,Tues,Thurs,Fri,Sat */
+  @Column({ type: 'varchar', nullable: false })
+  daysOpen: string;
+
+  /** e.g Mon,Tues,Thurs,Fri,Sat */
+  @Column({ type: 'varchar', nullable: false })
+  daysClosed: string;
+
+  @Column({ type: 'time', nullable: false })
+  openHours: string;
+
+  @Column({ type: 'time', nullable: false })
+  closedHours: string;
+
+  @Column({ type: 'varchar', nullable: false, unique: true })
+  code: string;
+
+  @Column({ type: 'varchar', nullable: false })
+  email: string;
+
   // ** Spa, Salon, Barber Shop, etc.. */
   @Column({ type: 'varchar', nullable: true, default: () => '\'Others\'' })
-  business_type: string;
+  businessBype: string;
 
   // ** Active, Disabled */
   @Column({ type: 'varchar', default: () => '\'Active\'' })
-  vendor_status: string;
+  vendorStatus: string;
 
   // ** Free, Standard, Premium */
   @Column({ type: 'varchar', nullable: true, default: () => '\'Free\'' })
-  account_type: string;
+  accountType: string;
 
   @Column({ type: 'datetime', nullable: true })
-  last_transaction_date: string;
+  lastTransactionDate: string;
 
   @Column({ type: 'integer', nullable: true })
-  updated_by: string;
+  updatedBy: string;
 
   @Column({ type: 'datetime', nullable: true })
-  last_date_updated: string;
+  lastDateUpdated: string;
 
   @Column({ type: 'integer', nullable: false })
-  created_by: number;
+  createdBy: number;
 
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
-  date_created: string;
+  dateCreated: string;
 }
 
 // tslint:disable-next-line:max-classes-per-file
@@ -130,19 +130,20 @@ export class VendorBranches {
   dateCreated: string;
 }
 
+// tslint:disable-next-line:max-classes-per-file
 @Entity()
 export class VendorProducts {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ type: 'integer', nullable: false })
-  vendor_id: number;
+  vendorId: number;
 
   @Column({ type: 'integer', nullable: false })
-  branch_id: number;
+  branchId: number;
 
   @Column({ type: 'varchar', nullable: false, unique: true })
-  product_code: string;
+  productCode: string;
 
   @Column({ type: 'varchar', nullable: false })
   name: string;
@@ -151,34 +152,34 @@ export class VendorProducts {
   description: string;
 
   @Column({ type: 'varchar', nullable: true, default: () => '\'Service\'' })
-  product_type: string;
+  productType: string;
 
   @Column({ type: 'varchar', nullable: true, default: () => '\'N/A\'' })
   duration: string;
 
   @Column({ type: 'double precision', nullable: false, default: () => 0.0 })
-  product_cost: number;
+  productCost: number;
 
   @Column({ type: 'double precision', nullable: false, default: () => 0.0 })
-  product_price: number;
+  productPrice: number;
 
   @Column({ type: 'double precision', nullable: false, default: () => 0.0 })
-  product_comission: number;
+  productComission: number;
 
   @Column({ type: 'double precision', nullable: true, default: () => 0.0 })
   rating: number;
 
   @Column({ type: 'integer', nullable: true })
-  updated_by: number;
+  updatedBy: number;
 
   @Column({ type: 'datetime', nullable: true })
-  last_date_updated: string;
+  lastDateUpdated: string;
 
   @Column({ type: 'integer', nullable: false })
-  created_by: number;
+  createdBy: number;
 
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
-  date_created: string;
+  dateCreated: string;
 }
 
 // tslint:disable-next-line:max-classes-per-file
