@@ -54,13 +54,13 @@ export class Client_Address_Book {
   id: number;
 
   @Column({ type: 'text', nullable: false })
-  client_id: string;
+  clientId: string;
 
   @Column({ type: 'text', nullable: true })
-  full_name: string;
+  fullName: string;
 
   @Column({ type: 'text', nullable: false })
-  mobile_no: string;
+  mobileNo: string;
 
   /** House/Unit/Flr #, Bldg Name, Blk or Lot # */
   @Column({ type: 'varchar', nullable: false, unique: false })
@@ -79,10 +79,10 @@ export class Client_Address_Book {
   last_transaction_date: string;
 
   @Column({ type: 'datetime' })
-  last_date_updated: string;
+  lastTransactionDate: string;
 
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
-  date_created: string;
+  dateCreated: string;
 }
 
 @Entity()
