@@ -28,7 +28,9 @@ import { CommonQueries } from './_commons/commons.orm';
     ...userProviders,
     UsersService,
     HttpStrategy,
+    // VendorServiceService,
   ],
+  controllers: [],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

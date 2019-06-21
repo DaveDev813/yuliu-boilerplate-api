@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiUseTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
-import { ClientsService } from './clients.service';
+import { ClientsService } from './services/clients.service';
 import { NewClientDto, UpdateClientDto } from './dto/client.dto';
 import { searchDto, primaryIdDto } from 'src/_commons/commons.dto';
 
