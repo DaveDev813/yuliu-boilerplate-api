@@ -91,15 +91,15 @@ export class Client_Reviews {
   id: number;
 
   @Column({ type: 'text', nullable: false })
-  client_id: string;
+  clientId: string;
 
   /** Vendor id, transaction id, product id  */
   @Column({ type: 'text', nullable: false })
-  reference_id: string;
+  referenceId: string;
 
   /** Service, Business, Product */
   @Column({ type: 'text', nullable: false })
-  feedback_to: string;
+  feedbackTo: string;
 
   @Column({ type: 'varchar', nullable: false })
   rating: string;
@@ -108,5 +108,5 @@ export class Client_Reviews {
   feedback: string;
 
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
-  date_created: string;
+  dateCreated: string;
 }
