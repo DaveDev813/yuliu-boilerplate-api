@@ -1,9 +1,9 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ClientsController } from './clients.controller';
-import { ClientsService } from './services/clients.service';
+import { ClientAccountService } from './services/clientAccount.service';
 import { UsersService } from 'src/users/users.service';
 import { PassportModule } from '@nestjs/passport';
-import { clientProviders, addressBookProviders } from './clients.providers';
+import { clientProviders, addressBookProviders, clientAccountProviders } from './clients.providers';
 import { DatabaseModule } from 'src/_database/database.module';
 import { userProviders } from 'src/users/users.providers';
 import { JWTChecker, Logger } from 'src/app.middleware';
@@ -16,17 +16,18 @@ import { AddressbookService } from './services/addressbook.service';
         DatabaseModule,
         PassportModule.register({ defaultStrategy: 'bearer' })
     ],
-    controllers : [ 
-        ClientsController, AddressbookController
+    controllers : [
+        ClientsController
     ],
-    providers : [ 
+    providers : [
         CommonQueries,
         ...userProviders,
-        ...clientProviders, 
+        ...clientProviders,
+        ...clientAccountProviders,
         ...addressBookProviders,
-        ClientsService, 
+        ClientAccountService,
         UsersService,
-        AddressbookService
+        AddressbookService,
     ]
 })
 export class ClientsModule {}

@@ -1,5 +1,5 @@
 import { ApiModelProperty } from '@nestjs/swagger';
-import { IsString, IsNumber, IsOptional, IsPositive } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsPositive, IsEmail, IsNotEmpty } from 'class-validator';
 
 // tslint:disable-next-line:class-name
 export class primaryIdDto {
@@ -23,4 +23,18 @@ export class searchDto {
   @IsNumber()
   @IsPositive()
   limit: number = 10;
+}
+
+export class signIn{
+
+  @ApiModelProperty()
+  @IsEmail()
+  @IsNotEmpty()
+  @IsOptional()
+  email:string;
+
+  @ApiModelProperty()
+  @IsString()
+  @IsNotEmpty()
+  password: string;
 }

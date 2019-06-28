@@ -1,33 +1,31 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class Clients_Information{
+export class Client_Address_Book {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({type:'int', nullable : false })
-  account_id : number;
-
   @Column({ type: 'text', nullable: false })
-  firstname: string;
+  clientId: string;
 
   @Column({ type: 'text', nullable: true })
-  middlename: string;
+  fullName: string;
 
   @Column({ type: 'text', nullable: false })
-  lastname: string;
+  mobileNo: string;
 
-  @Column({ type: 'date', nullable: true })
-  birthday: string;
-
-  @Column({ type: 'text', nullable: false })
-  gender: string;
-
+  /** House/Unit/Flr #, Bldg Name, Blk or Lot # */
   @Column({ type: 'varchar', nullable: false, unique: false })
-  email: string;
+  address: string;
 
   @Column({ type: 'varchar', nullable: false })
-  mobileNo: string;
+  barangay: string;
+
+  @Column({ type: 'varchar', nullable: false })
+  city: string;
+
+  @Column({ type: 'varchar', nullable: false })
+  province: string;
 
   @Column({ type: 'datetime', nullable: true })
   lastTransactionDate: string;
