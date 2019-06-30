@@ -20,7 +20,7 @@ export class Clients_Information{
   @Column({ type: 'date', nullable: true })
   birthday: string;
 
-  @Column({ type: 'text', nullable: false })
+  @Column({ type: 'text', nullable: true })
   gender: string;
 
   @Column({ type: 'varchar', nullable: false, unique: false })

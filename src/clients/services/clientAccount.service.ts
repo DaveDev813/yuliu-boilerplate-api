@@ -4,6 +4,7 @@ import { Clients_Information } from '../entities/clients.entity';
 import { Client_Accounts } from '../entities/clientAccounts.entity';
 import * as md5 from 'md5';
 import * as uuid from 'uuid/v1';
+import { RegisterClientAccount } from '../dto/clientAccount.dto';
 
 @Injectable()
 export class ClientAccountService {
@@ -16,9 +17,24 @@ export class ClientAccountService {
   ) {
   }
 
-  async registerNewClient(email: string, password: string){
+  async registerNewClient(account: RegisterClientAccount){
 
-    const result = await this.clientAccount.insert({ email, password : md5(password), verificationToken : uuid() });
+    const result = await this.clientAccount.insert({ 
+      email : account.email, 
+      password : md5(account.password), 
+      verificationToken : uuid() 
+    });
+
+    if(result.generatedMaps){
+
+      const accountInformation = await this.clientInformation.insert({
+        firstname : account.firstname,
+        lastname : account.lastname,
+        mobileNo : account.mobileNo,
+        email : account.email,
+        account_id : result.generatedMaps[0].id
+      });
+    }
 
     return result;
   }

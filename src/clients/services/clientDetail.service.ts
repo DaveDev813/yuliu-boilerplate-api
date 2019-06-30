@@ -41,8 +41,6 @@ export class ClientsService{
     return account;
   }
 
-
-
   async getClientInfoById(identity: number) {
     return await this.clientInformation.findOne(identity);
   }

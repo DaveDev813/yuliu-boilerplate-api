@@ -7,18 +7,35 @@ import { searchDto } from 'src/_commons/commons.dto';
 import { Request, Response } from 'express';
 import { RegisterClientAccount } from './dto/clientAccount.dto';
 import { ClientSignIn } from './dto/SignInClient.dto';
+import { SessGuard } from '../_guards/session.guard';
+import { CustomerProductService } from './services/customerProduct.service';
 
 @ApiUseTags('Client')
-// @ApiBearerAuth()
-// @UseGuards(AuthGuard())
-@Controller('clients')
+@ApiBearerAuth()
+@UseGuards(AuthGuard())
+@Controller('client')
 export class ClientsController {
-  constructor(private readonly clientAccountService: ClientAccountService) {}
 
-  @Post()
-  async getClients(@Body() options: searchDto){
+  constructor(
+    private readonly clientAccountService: ClientAccountService,
+    private readonly productService: CustomerProductService,
+  ) {}
 
-    // return await this.clientAccountService.getClients(options);
+  @Post('register')
+  async registerClient(@Body() account: RegisterClientAccount, @Res() res: Response){
+
+    const duplicate = await this.clientAccountService.checkDuplicateEmail(account.email);
+
+    if (duplicate) {
+
+      throw new BadRequestException('Email already exists..');
+
+    } else {
+
+      const result = await this.clientAccountService.registerNewClient(account);
+
+      res.status(200).send({ status : "ok", payload : result });
+    }
   }
 
   @Post('signin')
@@ -40,11 +57,12 @@ export class ClientsController {
 
       } else {
 
-        req.session.type = 'customer';
+        req.session.accountId = info.account_id;
         req.session.isLoggedIn = true;
         req.session.name = `${info.firstname} ${info.lastname}`;
         req.session.mobileNo = info.mobileNo;
         req.session.email = info.email;
+        req.session.type = 'customer';
 
         res.status(200).send({ status : 'OK', message : 'Success' });
       }
@@ -52,6 +70,7 @@ export class ClientsController {
   }
 
   @Post('signout')
+  @UseGuards(new SessGuard())
   async signOutClient(@Body() credentials: any, @Req() req: Request, @Res() res: Response){
 
     req.session.destroy( err => {
@@ -59,73 +78,34 @@ export class ClientsController {
         if (err) { throw new BadRequestException('Unexpected error occured..'); }
 
         res.status(200).send({ status : 'OK', message : 'Success' });
-
     });
   }
 
-  @Post('register')
-  async registerClient(@Body() account: RegisterClientAccount){
+  @Get('info')
+  @UseGuards(new SessGuard())
+  async getClientInfo(@Req() req : Request, @Res() res : Response){
 
-    const duplicate = await this.clientAccountService.checkDuplicateEmail(account.email);
+    const info = await this.clientAccountService.getClientInforByAccountId(req.session.accountId);
 
-    if (duplicate) {
-
-      throw new BadRequestException('Email already exists..');
-
-    } else {
-
-      const result = this.clientAccountService.registerNewClient(account.email, account.password);
-
-      return result;
-
-    }
+    res.status(200).send({ status : "ok", payload : info });
   }
 
-  @Put('info/update')
-  async updateClientInfo(@Body() revisions: UpdateClientDto){
+  @Get('services/')
+  // @UseGuards(new SessGuard())
+  async getCuratedServices(@Req() req: Request, @Res() res: Response){
+
+    const services = await this.productService.getCustomerServices();
+
+    res.status(200).send({ status : "ok", payload : services});
   }
 
-  // @Get(':id')
-  // async getClientInfo(@Param('id') identity: number) {
-  //   const client = this.clientService.getClientInfoById(identity);
+  @Get('services/categories')
+  // @UseGuards(new SessGuard())
+  async getProductCategories(@Req() req: Request, @Res() res: Response){
 
-  //   if (!client) {
-  //     return {
-  //       error: { description: 'No Client Found' },
-  //     };
-  //   }
+    const categories = await this.productService.getCustomerServiceCategories();
 
-  //   return client;
-  // }
-
-  // @Post('create')
-  // async createClient(@Body() client: NewClientDto) {
-
-  //   const newClient = await this.clientService.createClient(client);
-
-  //   return {
-  //     data: { clientId: newClient.raw.insertId },
-  //   };
-  // }
-
-  // @Put('update/:id')
-  // async updateClient(
-  //   @Param('id') id: number,
-  //   @Body() revisions: UpdateClientDto,
-  // ) {
-  //   const client = this.clientService.getClientInfoById(id);
-
-  //   if (!client) {
-  //     return {
-  //       error: { description: 'No Client Found' },
-  //     };
-  //   }
-
-  //   await this.clientService.updateClient(id, revisions);
-
-  //   return await this.clientService.getClientInfoById(id);
-  // }
-
-
+    res.status(200).send({ status : "ok", payload : categories });
+  }
 
 }

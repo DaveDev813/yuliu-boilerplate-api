@@ -10,6 +10,9 @@ import { JWTChecker, Logger } from 'src/app.middleware';
 import { CommonQueries } from 'src/_commons/commons.orm';
 import { AddressbookController } from './addressbook.controller';
 import { AddressbookService } from './services/addressbook.service';
+import { vendorProviders, productProviders } from '../vendors/vendors.provider';
+import { VendorsService } from '../vendors/services/vendors.service';
+import { CustomerProductService } from './services/customerProduct.service';
 
 @Module({
     imports: [
@@ -21,21 +24,25 @@ import { AddressbookService } from './services/addressbook.service';
     ],
     providers : [
         CommonQueries,
+        ...vendorProviders,
         ...userProviders,
         ...clientProviders,
+        ...vendorProviders,
+        ...productProviders,
         ...clientAccountProviders,
         ...addressBookProviders,
         ClientAccountService,
         UsersService,
         AddressbookService,
+        CustomerProductService,
     ]
 })
-export class ClientsModule {}
-// export class ClientsModule implements NestModule {
-//   /**
-//    * Apply middlewares for this module
-//    */
-//   configure(consumer: MiddlewareConsumer) {
-//     // consumer.apply(JWTChecker).forRoutes('clients');
-//   }
-// }
+//export class ClientsModule {}
+export class ClientsModule implements NestModule {
+  /**
+   * Apply middlewares for this module
+   */
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(JWTChecker).forRoutes('client');
+  }
+}

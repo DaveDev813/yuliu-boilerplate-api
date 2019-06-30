@@ -19,9 +19,9 @@ import _ = require('lodash');
 import { ApiUseTags, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 
-@ApiUseTags(`Vendors Products`)
-@ApiBearerAuth()
-@UseGuards(AuthGuard())
+//@ApiUseTags(`Vendors Products`)
+// @ApiBearerAuth()
+// @UseGuards(AuthGuard())
 @Controller('products')
 export class ProductsController {
   constructor(

@@ -90,10 +90,10 @@ export class VendorsService {
         : null,
       address: vendor.address,
       city: vendor.city,
-      business_type: vendor.businessType,
-      vendor_status: 'Deactivated',
-      account_type: 'Free',
-      created_by: createdBy,
+      businessType: vendor.businessType,
+      vendorStatus: 'Deactivated',
+      accountType: 'Free',
+      createdBy: createdBy,
     };
 
     // tslint:disable-next-line:variable-name

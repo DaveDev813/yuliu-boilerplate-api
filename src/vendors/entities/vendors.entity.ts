@@ -44,8 +44,8 @@ export class Vendors {
   email: string;
 
   // ** Spa, Salon, Barber Shop, etc.. */
-  @Column({ type: 'varchar', nullable: true, default: () => '\'Others\'' })
-  businessBype: string;
+  @Column({ type: 'varchar', nullable: false, default: () => '\'Others\'' })
+  businessType: string;
 
   // ** Active, Disabled */
   @Column({ type: 'varchar', default: () => '\'Active\'' })
