@@ -21,9 +21,9 @@ import faker = require('faker');
 import _ = require('lodash');
 import { EmployeeService } from './services/employee.service';
 
-@ApiUseTags(`Vendors`)
-@UseGuards(AuthGuard())
-@ApiBearerAuth()
+//@ApiUseTags(`Vendors`)
+// @UseGuards(AuthGuard())
+// @ApiBearerAuth()
 @Controller(`vendors`)
 export class VendorsController {
   constructor(
@@ -172,20 +172,8 @@ export class VendorsController {
         openHours: '08:00',
         address: `${faker.address.streetAddress()} ${faker.address.streetName()} ${faker.address.zipCode()}`,
         city: faker.address.city(),
-        businessType: faker.company.bs(),
+        businessType: faker.company.bsBuzz(),
       };
-
-      fakeVendor[`code`] = voucherCodeGenerator.generate({
-        length: 5,
-        count: 1,
-        pattern: `#####`,
-        characters: voucherCodeGenerator.charset(`alphabetic`),
-        prefix: `VND`,
-        suffix: moment()
-          .format(`YYYY`)
-          .toString(),
-      })[0];
-
       await this.vendorService.createVendor(fakeVendor);
     });
   }

@@ -1,68 +1,111 @@
-import {
-  Controller,
-  Param,
-  Post,
-  UseGuards,
-  Body,
-  Put,
-  Get,
-  BadRequestException,
-} from '@nestjs/common';
+import { Controller, Param, Post, UseGuards, Body, Put, Get, Req, Res, UnauthorizedException, NotFoundException, BadRequestException } from '@nestjs/common';
 import { ApiBearerAuth, ApiUseTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
-import { ClientsService } from './services/clients.service';
+import { ClientAccountService } from './services/clientAccount.service';
 import { NewClientDto, UpdateClientDto } from './dto/client.dto';
-import { searchDto, primaryIdDto } from 'src/_commons/commons.dto';
+import { searchDto } from 'src/_commons/commons.dto';
+import { Request, Response } from 'express';
+import { RegisterClientAccount } from './dto/clientAccount.dto';
+import { ClientSignIn } from './dto/SignInClient.dto';
+import { SessGuard } from '../_guards/session.guard';
+import { CustomerProductService } from './services/customerProduct.service';
 
 @ApiUseTags('Client')
 @ApiBearerAuth()
 @UseGuards(AuthGuard())
-@Controller('clients')
+@Controller('client')
 export class ClientsController {
-  constructor(private readonly clientService: ClientsService) {}
 
-  @Post()
-  async getClients(@Body() options: searchDto) {
-    return await this.clientService.getClients(options);
-  }
+  constructor(
+    private readonly clientAccountService: ClientAccountService,
+    private readonly productService: CustomerProductService,
+  ) {}
 
-  @Get(':id')
-  async getClientInfo(@Param('id') identity: number) {
-    const client = this.clientService.getClientInfoById(identity);
+  @Post('register')
+  async registerClient(@Body() account: RegisterClientAccount, @Res() res: Response){
 
-    if (!client) {
-      return {
-        error: { description: 'No Client Found' },
-      };
+    const duplicate = await this.clientAccountService.checkDuplicateEmail(account.email);
+
+    if (duplicate) {
+
+      throw new BadRequestException('Email already exists..');
+
+    } else {
+
+      const result = await this.clientAccountService.registerNewClient(account);
+
+      res.status(200).send({ status : "ok", payload : result });
     }
-
-    return client;
   }
 
-  @Post('create')
-  async createClient(@Body() client: NewClientDto) {
-    const newClient = await this.clientService.createClient(client);
+  @Post('signin')
+  async signInClient(@Body() credentials: ClientSignIn, @Req() req: Request, @Res() res: Response){
 
-    return {
-      data: { clientId: newClient.raw.insertId },
-    };
-  }
+    const account = await this.clientAccountService.authenticateClientAccount(credentials.email, credentials.password);
 
-  @Put('update/:id')
-  async updateClient(
-    @Param('id') id: number,
-    @Body() revisions: UpdateClientDto,
-  ) {
-    const client = this.clientService.getClientInfoById(id);
+    if (!account) {
 
-    if (!client) {
-      return {
-        error: { description: 'No Client Found' },
-      };
+       throw new UnauthorizedException('Invalid email and password combination.');
+
+    } else {
+
+      const info = await this.clientAccountService.getClientInforByAccountId(account.id);
+
+      if (!info) {
+
+        throw new NotFoundException('Customer information can\'t be found');
+
+      } else {
+
+        req.session.accountId = info.account_id;
+        req.session.isLoggedIn = true;
+        req.session.name = `${info.firstname} ${info.lastname}`;
+        req.session.mobileNo = info.mobileNo;
+        req.session.email = info.email;
+        req.session.type = 'customer';
+
+        res.status(200).send({ status : 'OK', message : 'Success' });
+      }
     }
-
-    await this.clientService.updateClient(id, revisions);
-
-    return await this.clientService.getClientInfoById(id);
   }
+
+  @Post('signout')
+  @UseGuards(new SessGuard())
+  async signOutClient(@Body() credentials: any, @Req() req: Request, @Res() res: Response){
+
+    req.session.destroy( err => {
+
+        if (err) { throw new BadRequestException('Unexpected error occured..'); }
+
+        res.status(200).send({ status : 'OK', message : 'Success' });
+    });
+  }
+
+  @Get('info')
+  @UseGuards(new SessGuard())
+  async getClientInfo(@Req() req : Request, @Res() res : Response){
+
+    const info = await this.clientAccountService.getClientInforByAccountId(req.session.accountId);
+
+    res.status(200).send({ status : "ok", payload : info });
+  }
+
+  @Get('services/')
+  // @UseGuards(new SessGuard())
+  async getCuratedServices(@Req() req: Request, @Res() res: Response){
+
+    const services = await this.productService.getCustomerServices();
+
+    res.status(200).send({ status : "ok", payload : services});
+  }
+
+  @Get('services/categories')
+  // @UseGuards(new SessGuard())
+  async getProductCategories(@Req() req: Request, @Res() res: Response){
+
+    const categories = await this.productService.getCustomerServiceCategories();
+
+    res.status(200).send({ status : "ok", payload : categories });
+  }
+
 }

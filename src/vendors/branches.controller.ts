@@ -19,7 +19,7 @@ import faker = require('faker');
 import _ = require('lodash');
 import { AuthGuard } from '@nestjs/passport';
 
-@ApiUseTags('Vendors Branches')
+//@ApiUseTags('Vendors Branches')
 @ApiBearerAuth()
 @UseGuards(AuthGuard())
 @Controller('branches')

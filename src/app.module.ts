@@ -20,15 +20,14 @@ import { CommonQueries } from './_commons/commons.orm';
     PassportModule.register({ defaultStrategy: 'bearer' }),
     ClientsModule,
     ConfigModule,
-    UsersModule,
-    VendorsModule,
+    //UsersModule,
+    //VendorsModule,
   ],
   providers: [
     CommonQueries,
     ...userProviders,
     UsersService,
-    HttpStrategy,
-    // VendorServiceService,
+    HttpStrategy
   ],
   controllers: [],
 })

@@ -21,7 +21,10 @@ async function bootstrap() {
         transform: true,
       }),
     )
-    .enableCors()
+    .enableCors({
+      origin : true,
+      credentials:true
+    })
     .use(
       rateLimit({
         /** max 100 requests in 5mins */

@@ -17,7 +17,8 @@ import faker = require('faker');
 import { NewVendorEmployeeDto, UpdateVendorEmployee } from './dto/employee.dto';
 import { searchDto } from '../_commons/commons.dto';
 import { AuthGuard } from '@nestjs/passport';
-@ApiUseTags('Vendors Employee')
+
+//@ApiUseTags('Vendors Employee')
 @ApiBearerAuth()
 @UseGuards(AuthGuard())
 @Controller('employee')

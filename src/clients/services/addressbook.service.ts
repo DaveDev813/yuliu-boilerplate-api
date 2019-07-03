@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { Client_Address_Book } from '../entities/clients.entity';
+import { Client_Address_Book } from '../entities/client-address-book.entity';
 import { CommonQueries } from 'src/_commons/commons.orm';
 import { UpdateAddressDto, NewClientAddressDto } from '../dto/address.dto';
 import { searchDto } from '../../_commons/commons.dto';

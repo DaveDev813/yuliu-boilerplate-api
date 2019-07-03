@@ -7,7 +7,7 @@ import {
   Body,
   Delete,
 } from '@nestjs/common';
-import { ClientsService } from './services/clients.service';
+import { ClientAccountService } from './services/clientAccount.service';
 import { AddressbookService } from './services/addressbook.service';
 import { ApiUseTags, ApiBearerAuth } from '@nestjs/swagger';
 import { BadRequestException, UseGuards } from '@nestjs/common';
@@ -24,7 +24,7 @@ import { searchDto } from '../_commons/commons.dto';
 export class AddressbookController {
   constructor(
     private readonly addressbookService: AddressbookService,
-    private readonly clientService: ClientsService,
+    private readonly clientService: ClientAccountService,
   ) {}
 
   /**
