@@ -12,34 +12,38 @@ export class JWTChecker implements NestMiddleware{
     async use(@Req() request, @Res() response, next: Function){
 
         const headers = request.headers;
+        const params = request.params;
         const body = request.body;
-        const api_key = (headers.authorization) ? headers.authorization.substr(7) : null;
-        const bearer = await this.userService.getUserInfoByAPIKey(api_key);
-//        const app_token = bearer.app_token;
-        const app_token = 'encryptyourpayloadusingthistoken';      
+        const payload = request.method === 'GET' ? request.params : request.body;
+
+        // const api_key = (headers.authorization) ? headers.authorization.substr(7) : null;
+        // const bearer = await this.userService.getUserInfoByAPIKey(api_key);
+        // const app_token = bearer.app_token;
+        const app_token = 'encryptyourpayloadusingthistoken';
+
         /**
          * Checks if the token is still valid
-         * */
+        **/
         // if(moment().isAfter(moment(bearer.app_token_validity))){
         //     throw new UnauthorizedException("Token is Expired..");
-        // }        
+        // }
 
         /** Validate JWT */
         /** Override JWT checking for awhile */
-        if(body._d){
+        if(payload._d){
 
             jwt.verify(body._d, app_token, function(err, decoded){
-            
+
                 if(err){ next(new UnauthorizedException(err), 403); }
-    
+
                 request.body = decoded;
-    
+
                 next();
             });
-            
+
         }else{
-            /** Override JWT checking for awhile */
-            next();
+
+            throw new UnauthorizedException('Invalid Request');
         }
     }
 }

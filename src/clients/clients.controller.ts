@@ -123,7 +123,7 @@ export class ClientsController {
 
   @Post('signout')
   @UseGuards(AuthGuard(), new SessGuard())
-  async signOutClient(@Body() credentials: any, @Req() req: Request, @Res() res: Response){
+  async signOutClient(@Req() req: Request, @Res() res: Response){
 
     req.session.destroy( err => {
 
