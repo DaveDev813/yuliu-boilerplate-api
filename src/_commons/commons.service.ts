@@ -10,7 +10,7 @@ export class CommonServices{
 
     async sendVerificationEmail(email:string, id:number, name:string, tracker:string){
 
-        const verifyLink = `http:localhost:3000/clients/verify/${id}/${tracker}`;
+        const verifyLink = `http://localhost:3000/client/verify/${id}/${tracker}`;
         const subject = `Verify email for your Oozzyyy Account.`;
         const transporter = nodemailer.createTransport({
             host: "smtp.gmail.com",
