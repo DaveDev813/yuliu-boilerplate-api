@@ -13,7 +13,7 @@ export class Client_Accounts{
     password: string;
 
     @Column({ type: 'boolean', nullable: false, default: () => false })
-    isVerified: string;
+    isVerified: boolean;
 
     @Column({ type: 'text', nullable: false })
     verificationToken: string;

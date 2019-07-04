@@ -32,7 +32,7 @@ export class Clients_Information{
   @Column({ type: 'datetime', nullable: true })
   lastTransactionDate: string;
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'datetime', nullable : true })
   lastDateUpdated: string;
 
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })

@@ -1,27 +1,60 @@
-import { Controller, Param, Post, UseGuards, Body, Put, Get, Req, Res, UnauthorizedException, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Controller, Param, Post, UseGuards, Body, Get, Req, Res, UnauthorizedException, NotFoundException, BadRequestException } from '@nestjs/common';
 import { ApiBearerAuth, ApiUseTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { ClientAccountService } from './services/clientAccount.service';
-import { NewClientDto, UpdateClientDto } from './dto/client.dto';
-import { searchDto } from 'src/_commons/commons.dto';
 import { Request, Response } from 'express';
 import { RegisterClientAccount } from './dto/clientAccount.dto';
 import { ClientSignIn } from './dto/SignInClient.dto';
 import { SessGuard } from '../_guards/session.guard';
 import { CustomerProductService } from './services/customerProduct.service';
+import { CommonServices } from 'src/_commons/commons.service';
 
 @ApiUseTags('Client')
 @ApiBearerAuth()
-@UseGuards(AuthGuard())
 @Controller('client')
 export class ClientsController {
 
   constructor(
+    private readonly commons: CommonServices,
     private readonly clientAccountService: ClientAccountService,
     private readonly productService: CustomerProductService,
   ) {}
 
+  @Get('verify/:id/:guid')
+  async verifyEmail(@Res() res: Response, @Param('id') id: number, @Param('guid') tracker:string){
+
+    const info = await this.clientAccountService.getAccountByVerificationToken(id, tracker);
+
+    if(info){
+
+      if(info.isVerified){
+
+        res.status(400).send({ status: "failed", message : 'account is alredy verified', payload : info });
+
+      }else{
+
+        const result = await this.clientAccountService.verifyAccount(id);
+
+        if(result){
+
+          res.status(200).send({ status: "ok", message : 'account has been verified.', payload : info });
+
+        }else{
+
+          res.status(400).send({ status: "failed", message : 'unexpected error occured.', payload : result });
+        }
+      }
+
+    }else{
+
+      res.status(400).send({ status: "failed", message : 'could not find account.', payload : info });
+
+    }
+
+  }
+
   @Post('register')
+  @UseGuards(AuthGuard())
   async registerClient(@Body() account: RegisterClientAccount, @Res() res: Response){
 
     const duplicate = await this.clientAccountService.checkDuplicateEmail(account.email);
@@ -34,11 +67,30 @@ export class ClientsController {
 
       const result = await this.clientAccountService.registerNewClient(account);
 
-      res.status(200).send({ status : "ok", payload : result });
+      if(result){
+
+        const emailSent = this.commons.sendVerificationEmail(result.email, result.id, result.name, result.verificationToken);
+
+        if(emailSent){
+
+          res.status(200).send({ status : "ok", payload : result });
+
+        }else{
+
+          throw new BadRequestException('Unexpected error occured, please try again later..');
+        }
+
+      }else{
+
+        throw new BadRequestException('Unexpected error occured, please try again later..');
+      }
+
     }
+
   }
 
   @Post('signin')
+  @UseGuards(AuthGuard())
   async signInClient(@Body() credentials: ClientSignIn, @Req() req: Request, @Res() res: Response){
 
     const account = await this.clientAccountService.authenticateClientAccount(credentials.email, credentials.password);
@@ -49,7 +101,7 @@ export class ClientsController {
 
     } else {
 
-      const info = await this.clientAccountService.getClientInforByAccountId(account.id);
+      const info = await this.clientAccountService.getClientInfoByAccountId(account.id);
 
       if (!info) {
 
@@ -70,7 +122,7 @@ export class ClientsController {
   }
 
   @Post('signout')
-  @UseGuards(new SessGuard())
+  @UseGuards(AuthGuard(), new SessGuard())
   async signOutClient(@Body() credentials: any, @Req() req: Request, @Res() res: Response){
 
     req.session.destroy( err => {
@@ -82,16 +134,16 @@ export class ClientsController {
   }
 
   @Get('info')
-  @UseGuards(new SessGuard())
+  @UseGuards(AuthGuard(), new SessGuard())
   async getClientInfo(@Req() req : Request, @Res() res : Response){
 
-    const info = await this.clientAccountService.getClientInforByAccountId(req.session.accountId);
+    const info = await this.clientAccountService.getClientInfoByAccountId(req.session.accountId);
 
     res.status(200).send({ status : "ok", payload : info });
   }
 
   @Get('services/')
-  // @UseGuards(new SessGuard())
+  // @UseGuards(AuthGuard(), new SessGuard())
   async getCuratedServices(@Req() req: Request, @Res() res: Response){
 
     const services = await this.productService.getCustomerServices();
@@ -100,7 +152,7 @@ export class ClientsController {
   }
 
   @Get('services/categories')
-  // @UseGuards(new SessGuard())
+  // @UseGuards(AuthGuard(), new SessGuard())
   async getProductCategories(@Req() req: Request, @Res() res: Response){
 
     const categories = await this.productService.getCustomerServiceCategories();

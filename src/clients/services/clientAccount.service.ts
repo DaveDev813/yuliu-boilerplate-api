@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, BadRequestException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Clients_Information } from '../entities/clients.entity';
 import { Client_Accounts } from '../entities/clientAccounts.entity';
@@ -15,14 +15,32 @@ export class ClientAccountService {
     @Inject('CLIENT_INFO_REPOSITORY')
     private readonly clientInformation: Repository<Clients_Information>,
   ) {
+  } 
+
+  async verifyAccount(id:number){
+
+    const result = await this.clientAccount.update(id, { isVerified : true});
+
+    return result;
+
+  }
+
+  async getAccountByVerificationToken(id:number, tracker:string){
+
+    const result = await this.clientAccount.createQueryBuilder().select().where({
+      id, verficationToken : tracker
+    }).getOne();
+
+    return result;
   }
 
   async registerNewClient(account: RegisterClientAccount){
 
+    const verificationToken = uuid();
     const result = await this.clientAccount.insert({ 
       email : account.email, 
       password : md5(account.password), 
-      verificationToken : uuid() 
+      verificationToken 
     });
 
     if(result.generatedMaps){
@@ -34,9 +52,26 @@ export class ClientAccountService {
         email : account.email,
         account_id : result.generatedMaps[0].id
       });
+
+      if(accountInformation){
+
+        return {
+          id : result.generatedMaps[0].id,
+          name : account.firstname,
+          email : account.email,
+          verificationToken:verificationToken
+        }
+
+      }else{
+
+        return false;
+      }
+
+    }else{
+
+      return false;
     }
 
-    return result;
   }
 
   async authenticateClientAccount(email: string, password: string){
@@ -53,7 +88,7 @@ export class ClientAccountService {
     return count;
   }
 
-  async getClientInforByAccountId(accountId: number){
+  async getClientInfoByAccountId(accountId: number){
 
     const information = await this.clientInformation.createQueryBuilder().select().where({ accountId }).getOne();
 

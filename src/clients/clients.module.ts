@@ -13,6 +13,7 @@ import { AddressbookService } from './services/addressbook.service';
 import { vendorProviders, productProviders } from '../vendors/vendors.provider';
 import { VendorsService } from '../vendors/services/vendors.service';
 import { CustomerProductService } from './services/customerProduct.service';
+import { CommonServices } from 'src/_commons/commons.service';
 
 @Module({
     imports: [
@@ -34,6 +35,7 @@ import { CustomerProductService } from './services/customerProduct.service';
         ClientAccountService,
         UsersService,
         AddressbookService,
+        CommonServices,
         CustomerProductService,
     ]
 })

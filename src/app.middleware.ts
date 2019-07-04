@@ -25,6 +25,7 @@ export class JWTChecker implements NestMiddleware{
         // }        
 
         /** Validate JWT */
+        /** Override JWT checking for awhile */
         if(body._d){
 
             jwt.verify(body._d, app_token, function(err, decoded){
@@ -37,7 +38,7 @@ export class JWTChecker implements NestMiddleware{
             });
             
         }else{
-
+            /** Override JWT checking for awhile */
             next();
         }
     }
